@@ -1,7 +1,7 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const SERVER_UNREACHABLE =
-  "Cannot reach the server. Make sure the backend is running on http://localhost:8000";
+  `Cannot reach the server. Make sure the backend is running on ${API_URL}`;
 
 // AI endpoints (chat, signals, journal) can take up to 90s with free models
 const AI_PATHS = ["/chat/query", "/signals/", "/journal", "/backtest/run"];
