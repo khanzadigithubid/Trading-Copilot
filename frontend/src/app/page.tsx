@@ -121,6 +121,11 @@ export default function HomePage() {
             </div>
             <span className="font-semibold text-slate-100">Trading Copilot</span>
           </div>
+          <div className="hidden sm:flex items-center gap-5 text-sm text-slate-400">
+            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
+            <Link href="/contact" className="hover:text-slate-100 transition">Contact</Link>
+          </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-slate-400 hover:text-slate-100 transition">
               Sign in
@@ -492,7 +497,19 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-slate-800 px-6 py-8 text-center text-xs text-slate-600">
+      <footer className="border-t border-slate-800 px-6 py-10 text-center text-xs text-slate-600">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-slate-500 text-sm mb-6">
+          <Link href="/markets" className="hover:text-slate-300 transition">Markets</Link>
+          <Link href="/markets/crypto" className="hover:text-slate-300 transition">Crypto</Link>
+          <Link href="/markets/forex" className="hover:text-slate-300 transition">Forex</Link>
+          <Link href="/markets/stocks" className="hover:text-slate-300 transition">Stocks</Link>
+          <Link href="/markets/commodities" className="hover:text-slate-300 transition">Commodities</Link>
+          <Link href="/markets/indices" className="hover:text-slate-300 transition">Indices</Link>
+          <Link href="/about" className="hover:text-slate-300 transition">About</Link>
+          <Link href="/contact" className="hover:text-slate-300 transition">Contact</Link>
+          <Link href="/privacy" className="hover:text-slate-300 transition">Privacy</Link>
+          <Link href="/terms" className="hover:text-slate-300 transition">Terms</Link>
+        </div>
         <p>AI Trading Copilot · For educational purposes only · Not financial advice</p>
         <p className="mt-1">© {new Date().getFullYear()} AI Trading Copilot. All rights reserved.</p>
       </footer>
