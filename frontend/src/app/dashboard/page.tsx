@@ -1,0 +1,281 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+
+import AlertsPanel from "@/components/AlertsPanel";
+import AssetDashboard from "@/components/AssetDashboard";
+import BacktestPanel from "@/components/BacktestPanel";
+import CandlestickChart from "@/components/CandlestickChart";
+import ChatPanel from "@/components/ChatPanel";
+import CommunityPanel from "@/components/CommunityPanel";
+import MTFSignalPanel from "@/components/MTFSignalPanel";
+import PaperTradingPanel from "@/components/PaperTradingPanel";
+import PortfolioPanel from "@/components/PortfolioPanel";
+import RiskPanel from "@/components/RiskPanel";
+import SentimentPanel from "@/components/SentimentPanel";
+import SignalPanel from "@/components/SignalPanel";
+import TradeJournalPanel from "@/components/TradeJournalPanel";
+
+type DashTab = "overview" | "chart" | "signals" | "trading" | "portfolio" | "alerts" | "community";
+
+const TABS: { id: DashTab; label: string; icon: string }[] = [
+  { id: "overview",   label: "Overview",   icon: "⬡" },
+  { id: "chart",      label: "Chart",      icon: "📈" },
+  { id: "signals",    label: "Signals",    icon: "🤖" },
+  { id: "trading",    label: "Trading",    icon: "💼" },
+  { id: "portfolio",  label: "Portfolio",  icon: "📊" },
+  { id: "alerts",     label: "Alerts",     icon: "🔔" },
+  { id: "community",  label: "Community",  icon: "👥" },
+];
+
+export default function DashboardPage() {
+  const { data: session, status } = useSession();
+  const searchParams = useSearchParams();
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<DashTab>("overview");
+
+  // Read ?tab= from URL on mount (used by home page feature cards)
+  useEffect(() => {
+    const tab = searchParams.get("tab") as DashTab | null;
+    const validTabs: DashTab[] = ["overview", "chart", "signals", "trading", "portfolio", "alerts", "community"];
+    if (tab && validTabs.includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+          <p className="text-slate-400 text-sm">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-4">
+        <p className="text-slate-400">Please sign in to continue.</p>
+        <Link href="/login" className="text-emerald-400 hover:underline">Go to login</Link>
+      </div>
+    );
+  }
+
+  const token = session.user.accessToken;
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100">
+
+      {/* ── Top header ── */}
+      <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-sm">
+              AI
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-emerald-400 leading-none">
+                Trading Copilot
+              </p>
+              <p className="text-base font-semibold leading-tight">Dashboard</p>
+            </div>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-6 text-sm text-slate-400">
+            {selectedSymbol && (
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400 font-medium">
+                {selectedSymbol} selected
+              </span>
+            )}
+            <span>{session.user.email}</span>
+          </div>
+
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-sm hover:bg-slate-800 transition"
+          >
+            Sign out
+          </button>
+        </div>
+      </header>
+
+      {/* ── Stats bar ── */}
+      <div className="border-b border-slate-800 bg-slate-900/40">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex gap-0 overflow-x-auto">
+            {[
+              {
+                label: "Capital",
+                value: `$${session.user.capital.toLocaleString()}`,
+                color: "text-emerald-400",
+              },
+              {
+                label: "Risk / trade",
+                value: `${session.user.riskTolerance}%`,
+                color: "text-slate-100",
+              },
+              {
+                label: "Assets",
+                value: "27 markets",
+                color: "text-slate-100",
+              },
+              {
+                label: "Status",
+                value: "Paper trading",
+                color: "text-amber-400",
+              },
+            ].map(({ label, value, color }) => (
+              <div
+                key={label}
+                className="flex min-w-[120px] flex-col border-r border-slate-800 px-5 py-3 last:border-r-0"
+              >
+                <p className="text-xs text-slate-500">{label}</p>
+                <p className={`mt-0.5 text-sm font-semibold ${color}`}>{value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Tab nav ── */}
+      <div className="sticky top-[57px] z-20 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex gap-0 overflow-x-auto">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition ${
+                  activeTab === tab.id
+                    ? "border-emerald-500 text-emerald-400"
+                    : "border-transparent text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <span>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main content ── */}
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+
+        {/* ════ OVERVIEW TAB ════ */}
+        {activeTab === "overview" && (
+          <div className="space-y-6">
+            {/* Asset table — full width */}
+            <AssetDashboard
+              accessToken={token}
+              selectedSymbol={selectedSymbol}
+              onSelectSymbol={(sym) => {
+                setSelectedSymbol(sym);
+                setActiveTab("chart");
+              }}
+            />
+
+            {/* Signal + Sentiment */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <SignalPanel symbol={selectedSymbol} accessToken={token} />
+              <SentimentPanel />
+            </div>
+
+            {/* Chat */}
+            <ChatPanel accessToken={token} selectedSymbol={selectedSymbol} />
+          </div>
+        )}
+
+        {/* ════ CHART TAB ════ */}
+        {activeTab === "chart" && (
+          <div className="space-y-6">
+            {selectedSymbol ? (
+              <>
+                <CandlestickChart symbol={selectedSymbol} accessToken={token} />
+                <MTFSignalPanel symbol={selectedSymbol} accessToken={token} />
+              </>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 p-16 text-center">
+                <p className="text-4xl">📈</p>
+                <p className="mt-4 text-lg font-semibold text-slate-300">No asset selected</p>
+                <p className="mt-2 text-sm text-slate-500">
+                  Go to the Overview tab and click any asset row to open its chart.
+                </p>
+                <button
+                  onClick={() => setActiveTab("overview")}
+                  className="mt-6 rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+                >
+                  Browse markets
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ════ SIGNALS TAB ════ */}
+        {activeTab === "signals" && (
+          <div className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <SignalPanel symbol={selectedSymbol} accessToken={token} />
+              <MTFSignalPanel symbol={selectedSymbol} accessToken={token} />
+            </div>
+            <BacktestPanel accessToken={token} selectedSymbol={selectedSymbol} />
+          </div>
+        )}
+
+        {/* ════ TRADING TAB ════ */}
+        {activeTab === "trading" && (
+          <div className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <PaperTradingPanel accessToken={token} selectedSymbol={selectedSymbol} />
+              <RiskPanel accessToken={token} selectedSymbol={selectedSymbol} />
+            </div>
+            <TradeJournalPanel accessToken={token} />
+          </div>
+        )}
+
+        {/* ════ PORTFOLIO TAB ════ */}
+        {activeTab === "portfolio" && (
+          <div className="space-y-6">
+            <PortfolioPanel accessToken={token} />
+            <TradeJournalPanel accessToken={token} />
+          </div>
+        )}
+
+        {/* ════ ALERTS TAB ════ */}
+        {activeTab === "alerts" && (
+          <div className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <AlertsPanel accessToken={token} selectedSymbol={selectedSymbol} />
+              <SentimentPanel />
+            </div>
+            <ChatPanel accessToken={token} selectedSymbol={selectedSymbol} />
+          </div>
+        )}
+
+        {/* ════ COMMUNITY TAB ════ */}
+        {activeTab === "community" && (
+          <div className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <CommunityPanel
+                accessToken={token}
+                selectedSymbol={selectedSymbol}
+                userEmail={session.user.email ?? ""}
+              />
+              <SentimentPanel />
+            </div>
+          </div>
+        )}
+
+        <p className="mt-10 text-center text-xs text-slate-600">
+          AI Trading Copilot · For educational purposes only · Not financial advice
+        </p>
+      </main>
+    </div>
+  );
+}
