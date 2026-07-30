@@ -123,8 +123,10 @@ export default function HomePage() {
           </div>
           <div className="hidden sm:flex items-center gap-5 text-sm text-slate-400">
             <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
+            <Link href="/news" className="hover:text-slate-100 transition">News</Link>
+            <Link href="/leaderboard" className="hover:text-slate-100 transition">Leaderboard</Link>
             <Link href="/about" className="hover:text-slate-100 transition">About</Link>
-            <Link href="/contact" className="hover:text-slate-100 transition">Contact</Link>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-slate-400 hover:text-slate-100 transition">
@@ -505,6 +507,9 @@ export default function HomePage() {
           <Link href="/markets/stocks" className="hover:text-slate-300 transition">Stocks</Link>
           <Link href="/markets/commodities" className="hover:text-slate-300 transition">Commodities</Link>
           <Link href="/markets/indices" className="hover:text-slate-300 transition">Indices</Link>
+          <Link href="/learn" className="hover:text-slate-300 transition">Learn</Link>
+          <Link href="/news" className="hover:text-slate-300 transition">News</Link>
+          <Link href="/leaderboard" className="hover:text-slate-300 transition">Leaderboard</Link>
           <Link href="/about" className="hover:text-slate-300 transition">About</Link>
           <Link href="/contact" className="hover:text-slate-300 transition">Contact</Link>
           <Link href="/privacy" className="hover:text-slate-300 transition">Privacy</Link>

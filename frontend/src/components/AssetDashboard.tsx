@@ -43,15 +43,18 @@ interface AssetDashboardProps {
 export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSymbol }: AssetDashboardProps) {
   const [activeMarket, setActiveMarket] = useState<MarketType | "all">("all");
   const [assets, setAssets] = useState<Asset[]>([]);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const filteredAssets = useMemo(() => {
-    if (activeMarket === "all") {
-      return assets;
+    let list = activeMarket === "all" ? assets : assets.filter((a) => a.market_type === activeMarket);
+    if (search.trim()) {
+      const q = search.trim().toUpperCase();
+      list = list.filter((a) => a.symbol.includes(q) || (a.name ?? "").toUpperCase().includes(q));
     }
-    return assets.filter((asset) => asset.market_type === activeMarket);
-  }, [activeMarket, assets]);
+    return list;
+  }, [activeMarket, assets, search]);
 
   const symbols = useMemo(() => filteredAssets.map((asset) => asset.symbol), [filteredAssets]);
   const { prices, connected } = usePriceWebSocket(symbols);
@@ -107,7 +110,7 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-6 flex flex-wrap items-center gap-2">
         {MARKET_TABS.map((tab) => (
           <button
             key={tab.id}
@@ -121,6 +124,15 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
             {tab.label}
           </button>
         ))}
+        <div className="ml-auto">
+          <input
+            type="text"
+            placeholder="Search asset..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="rounded-full border border-slate-700 bg-slate-950 px-4 py-2 text-sm outline-none focus:border-emerald-500 w-40"
+          />
+        </div>
       </div>
 
       {loading ? (
