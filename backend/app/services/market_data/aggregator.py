@@ -1,6 +1,7 @@
 from app.schemas.asset import HistoryRange, HistoryResponse, MarketType, PriceResponse
 from app.services.market_data.catalog import AssetDefinition, get_asset, list_assets
 from app.services.market_data.coingecko import coingecko_provider
+from app.services.market_data.kucoin import kucoin_provider
 from app.services.market_data.mock_provider import mock_provider
 from app.services.market_data.providers import (
     alpha_vantage_provider,
@@ -16,9 +17,9 @@ class MarketDataAggregator:
     async def get_price(self, symbol: str) -> PriceResponse:
         asset = self._require_asset(symbol)
 
-        # Crypto: try Binance first → CoinGecko fallback → mock
+        # Crypto: try Binance → KuCoin → CoinGecko → mock
         if asset.market_type == MarketType.crypto:
-            for provider in [binance_provider, coingecko_provider, mock_provider]:
+            for provider in [binance_provider, kucoin_provider, coingecko_provider, mock_provider]:
                 try:
                     return await provider.get_price(asset)
                 except Exception:
@@ -35,9 +36,13 @@ class MarketDataAggregator:
     async def get_history(self, symbol: str, history_range: HistoryRange) -> HistoryResponse:
         asset = self._require_asset(symbol)
 
-        # Crypto: try Binance → CoinGecko → mock
+        # Crypto: try Binance → KuCoin → CoinGecko → mock
         if asset.market_type == MarketType.crypto:
-            for provider, src in [(binance_provider, "binance"), (coingecko_provider, "coingecko")]:
+            for provider, src in [
+                (binance_provider, "binance"),
+                (kucoin_provider, "kucoin"),
+                (coingecko_provider, "coingecko"),
+            ]:
                 try:
                     bars = await provider.get_history(asset, history_range)
                     return HistoryResponse(
