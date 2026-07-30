@@ -18,6 +18,7 @@ class Settings(BaseSettings):
 
     # Market data APIs
     alpha_vantage_api_key: str = ""
+    polygon_api_key: str = ""
     twelve_data_api_key: str = ""
     news_api_key: str = ""
 

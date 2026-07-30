@@ -3,6 +3,7 @@ from app.services.market_data.catalog import AssetDefinition, get_asset, list_as
 from app.services.market_data.coingecko import coingecko_provider
 from app.services.market_data.kucoin import kucoin_provider
 from app.services.market_data.mock_provider import mock_provider
+from app.services.market_data.polygon import polygon_provider
 from app.services.market_data.providers import (
     alpha_vantage_provider,
     binance_provider,
@@ -31,6 +32,12 @@ class MarketDataAggregator:
         try:
             return await provider.get_price(asset)
         except Exception:
+            # Stocks: try Polygon as fallback
+            if asset.market_type == MarketType.stock:
+                try:
+                    return await polygon_provider.get_price(asset)
+                except Exception:
+                    pass
             return await mock_provider.get_price(asset)
 
     async def get_history(self, symbol: str, history_range: HistoryRange) -> HistoryResponse:
@@ -58,9 +65,9 @@ class MarketDataAggregator:
             return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
                                    range=history_range, bars=bars, source="mock")
 
-        # Forex / Stocks
+        # Forex / Stocks / Indices
         provider = self._provider_for(asset)
-        source_name = "twelvedata" if asset.market_type == MarketType.forex else "alphavantage"
+        source_name = "twelvedata" if asset.market_type == MarketType.forex else "polygon"
         try:
             bars = await provider.get_history(asset, history_range)
             return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
@@ -90,6 +97,8 @@ class MarketDataAggregator:
     def _provider_for(self, asset: AssetDefinition):
         if asset.market_type == MarketType.forex:
             return twelve_data_provider
+        if asset.market_type == MarketType.stock:
+            return polygon_provider
         return alpha_vantage_provider
 
 
