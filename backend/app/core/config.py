@@ -8,15 +8,21 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24
     cors_origins: str = "http://localhost:3000"
+
     # Anthropic direct (optional)
     anthropic_api_key: str = ""
-    # OpenRouter (free tier available — https://openrouter.ai)
+
+    # OpenRouter (free tier — https://openrouter.ai)
     openrouter_api_key: str = ""
-    openrouter_model: str = "meta-llama/llama-3.3-8b-instruct:free"
+    openrouter_model: str = "google/gemma-4-26b-a4b-it:free"
+
     # Market data APIs
     alpha_vantage_api_key: str = ""
     twelve_data_api_key: str = ""
     news_api_key: str = ""
+
+    # Admin — set your email here to access /admin/stats
+    admin_email: str = ""
 
     @property
     def cors_origin_list(self) -> list[str]:

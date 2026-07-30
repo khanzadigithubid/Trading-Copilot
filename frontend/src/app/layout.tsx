@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/react";
 
 import Providers from "@/components/Providers";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
@@ -54,6 +55,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>
         <PWAInstallPrompt />
+        <Analytics />
       </body>
     </html>
   );

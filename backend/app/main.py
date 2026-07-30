@@ -16,6 +16,7 @@ from app.routers import sentiment as sentiment_router
 from app.routers import community as community_router
 from app.routers import leaderboard as leaderboard_router
 from app.routers import news as news_router
+from app.routers import admin as admin_router
 from app.services.seed import seed_assets
 
 
@@ -59,6 +60,7 @@ app.include_router(sentiment_router.router)
 app.include_router(community_router.router)
 app.include_router(leaderboard_router.router)
 app.include_router(news_router.router)
+app.include_router(admin_router.router)
 
 
 @app.get("/health")
