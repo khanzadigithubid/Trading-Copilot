@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { SkeletonTable } from "@/components/Skeleton";
 import { usePriceWebSocket } from "@/hooks/usePriceWebSocket";
 import { fetchAssets } from "@/lib/market";
 import type { Asset, MarketType, PriceUpdate } from "@/types/market";
@@ -136,7 +137,9 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
       </div>
 
       {loading ? (
-        <p className="mt-8 text-center text-sm text-slate-400">Loading assets...</p>
+        <div className="mt-6">
+          <SkeletonTable rows={6} />
+        </div>
       ) : error ? (
         <p className="mt-8 text-center text-sm text-red-400">{error}</p>
       ) : (

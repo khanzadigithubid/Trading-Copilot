@@ -191,6 +191,156 @@ export default function HomePage() {
         <div className="absolute bottom-8 animate-bounce text-slate-600 text-xl">↓</div>
       </section>
 
+      {/* ── App Preview (Mock Dashboard) ── */}
+      <section className="border-b border-slate-800 bg-slate-900/20 px-6 py-16">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-center text-xs uppercase tracking-[0.2em] text-emerald-400 mb-4">
+            See it in action
+          </p>
+          <h2 className="text-center text-2xl font-bold mb-10">
+            Everything you need in one dashboard
+          </h2>
+
+          {/* Mock browser window */}
+          <div className="rounded-2xl border border-slate-700 bg-slate-900 overflow-hidden shadow-2xl shadow-black/40">
+            {/* Browser chrome */}
+            <div className="flex items-center gap-2 border-b border-slate-700 bg-slate-800 px-4 py-3">
+              <div className="flex gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-red-500/70" />
+                <div className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                <div className="h-3 w-3 rounded-full bg-emerald-500/70" />
+              </div>
+              <div className="mx-auto flex items-center gap-2 rounded-lg bg-slate-700 px-4 py-1 text-xs text-slate-400">
+                <span className="text-emerald-400">🔒</span>
+                kw-trading-copilot.vercel.app/dashboard
+              </div>
+            </div>
+
+            {/* Mock dashboard content */}
+            <div className="p-4 sm:p-6">
+              {/* Stats row */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 mb-5">
+                {[
+                  { label: "Capital", value: "$10,000", color: "text-emerald-400" },
+                  { label: "Risk/trade", value: "2%", color: "text-slate-100" },
+                  { label: "Open trades", value: "3", color: "text-blue-400" },
+                  { label: "Total P&L", value: "+$842", color: "text-emerald-400" },
+                ].map((s) => (
+                  <div key={s.label} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                    <p className="text-xs text-slate-500">{s.label}</p>
+                    <p className={`mt-1 text-lg font-bold font-mono ${s.color}`}>{s.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Main grid */}
+              <div className="grid gap-4 lg:grid-cols-2">
+                {/* Asset table mock */}
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-semibold">Live Market Prices</p>
+                    <span className="flex items-center gap-1.5 text-xs text-emerald-400">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Live
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {[
+                      { sym: "BTCUSDT", type: "crypto", price: "$64,034", chg: "+2.1%", up: true },
+                      { sym: "XAUUSD",  type: "forex",  price: "$4,065",  chg: "+0.8%", up: true },
+                      { sym: "EURUSD",  type: "forex",  price: "1.1450",  chg: "-0.2%", up: false },
+                      { sym: "AAPL",    type: "stock",  price: "$338.19", chg: "+1.4%", up: true },
+                      { sym: "NVDA",    type: "stock",  price: "$190.01", chg: "+3.2%", up: true },
+                    ].map((row) => (
+                      <div key={row.sym} className="flex items-center justify-between rounded-lg bg-slate-900/60 px-3 py-2 text-xs">
+                        <span className="font-semibold text-slate-100 w-20">{row.sym}</span>
+                        <span className={`rounded-full px-2 py-0.5 text-xs ${
+                          row.type === "crypto" ? "bg-amber-500/15 text-amber-400" :
+                          row.type === "forex"  ? "bg-blue-500/15 text-blue-400" :
+                          "bg-violet-500/15 text-violet-400"
+                        }`}>{row.type}</span>
+                        <span className="font-mono text-slate-100">{row.price}</span>
+                        <span className={`font-mono ${row.up ? "text-emerald-400" : "text-red-400"}`}>{row.chg}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Signal mock */}
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                  <p className="text-sm font-semibold mb-3">AI Signal — BTCUSDT</p>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-4 py-1.5 text-sm font-bold text-emerald-400">
+                      BUY
+                    </span>
+                    <span className="text-sm text-slate-300">78% confidence</span>
+                    <span className="text-sm text-amber-400">medium risk</span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-slate-800 mb-3">
+                    <div className="h-1.5 w-[78%] rounded-full bg-emerald-500" />
+                  </div>
+                  <p className="text-xs leading-relaxed text-slate-300 mb-3">
+                    &ldquo;RSI at 34.2 suggests oversold conditions. MACD is crossing above its signal line indicating bullish momentum. Price action shows a potential reversal setup forming.&rdquo;
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[["RSI", "34.2"], ["MACD", "+0.42"], ["MA50", "63,120"]].map(([l, v]) => (
+                      <div key={l} className="rounded-lg border border-slate-800 bg-slate-950/60 p-2 text-center">
+                        <p className="text-xs text-slate-500">{l}</p>
+                        <p className="font-mono text-xs text-slate-200">{v}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom row */}
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                  <p className="text-xs font-semibold text-slate-400 mb-2">📚 AI Trade Journal</p>
+                  <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-emerald-400">BTCUSDT LONG</span>
+                      <span className="text-xs text-emerald-400">EXCELLENT</span>
+                    </div>
+                    <p className="text-xs text-slate-400">&ldquo;Entry timing was strong. RSI oversold at 32. Consider trailing stop next time.&rdquo;</p>
+                  </div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                  <p className="text-xs font-semibold text-slate-400 mb-2">🕐 Multi-Timeframe</p>
+                  <div className="space-y-1.5">
+                    {[["1D", "BUY", "72%", "text-emerald-400"], ["1W", "BUY", "68%", "text-emerald-400"], ["1M", "HOLD", "51%", "text-slate-400"]].map(([tf, sig, conf, col]) => (
+                      <div key={tf} className="flex items-center justify-between text-xs">
+                        <span className="text-slate-500">{tf}</span>
+                        <span className={`font-semibold ${col}`}>{sig}</span>
+                        <span className="text-slate-400">{conf}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                  <p className="text-xs font-semibold text-slate-400 mb-2">🌡️ Sentiment</p>
+                  <div className="space-y-1.5">
+                    {[["BTCUSDT", "+0.72", "text-emerald-400"], ["XAUUSD", "+0.58", "text-emerald-400"], ["EURUSD", "-0.12", "text-red-400"]].map(([sym, score, col]) => (
+                      <div key={sym} className="flex items-center justify-between text-xs">
+                        <span className="text-slate-300">{sym}</span>
+                        <span className={`font-mono ${col}`}>{score}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-4 text-center text-xs text-slate-600">
+            Live dashboard at{" "}
+            <Link href="/register" className="text-emerald-500 hover:underline">
+              kw-trading-copilot.vercel.app
+            </Link>
+          </p>
+        </div>
+      </section>
+
       {/* ── Stats Bar ── */}
       <section className="border-b border-slate-800 bg-slate-900/30 py-8 px-6">
         <div className="mx-auto max-w-6xl">

@@ -106,8 +106,8 @@ export default function DashboardPage() {
 
       {/* ── Stats bar ── */}
       <div className="border-b border-slate-800 bg-slate-900/40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex gap-0 overflow-x-auto">
+        <div className="mx-auto max-w-7xl px-2 sm:px-6">
+          <div className="flex gap-0 overflow-x-auto scrollbar-hide">
             {[
               {
                 label: "Capital",
@@ -132,10 +132,10 @@ export default function DashboardPage() {
             ].map(({ label, value, color }) => (
               <div
                 key={label}
-                className="flex min-w-[120px] flex-col border-r border-slate-800 px-5 py-3 last:border-r-0"
+                className="flex min-w-[90px] flex-col border-r border-slate-800 px-3 sm:px-5 py-3 last:border-r-0"
               >
                 <p className="text-xs text-slate-500">{label}</p>
-                <p className={`mt-0.5 text-sm font-semibold ${color}`}>{value}</p>
+                <p className={`mt-0.5 text-xs sm:text-sm font-semibold ${color}`}>{value}</p>
               </div>
             ))}
           </div>
@@ -144,20 +144,20 @@ export default function DashboardPage() {
 
       {/* ── Tab nav ── */}
       <div className="sticky top-[57px] z-20 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex gap-0 overflow-x-auto">
+        <div className="mx-auto max-w-7xl px-2 sm:px-6">
+          <div className="flex gap-0 overflow-x-auto scrollbar-hide">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition ${
+                className={`flex items-center gap-1 sm:gap-1.5 border-b-2 px-3 sm:px-4 py-3 text-xs sm:text-sm font-medium whitespace-nowrap transition ${
                   activeTab === tab.id
                     ? "border-emerald-500 text-emerald-400"
                     : "border-transparent text-slate-400 hover:text-slate-200"
                 }`}
               >
-                <span>{tab.icon}</span>
-                {tab.label}
+                <span className="text-sm">{tab.icon}</span>
+                <span className="hidden xs:inline sm:inline">{tab.label}</span>
               </button>
             ))}
           </div>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Main content ── */}
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+      <main className="mx-auto max-w-7xl px-3 sm:px-6 py-4 sm:py-6">
 
         {/* ════ OVERVIEW TAB ════ */}
         {activeTab === "overview" && (
