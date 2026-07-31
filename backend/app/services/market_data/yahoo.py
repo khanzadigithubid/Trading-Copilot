@@ -14,6 +14,9 @@ YAHOO_SYMBOLS: dict[str, str] = {
     "XAGUSD": "SI=F",   # Silver futures
     "USOIL":  "CL=F",   # WTI Crude Oil futures
     "XAUUSD": "GC=F",   # Gold futures (backup)
+    "QQQ":    "QQQ",    # NASDAQ 100 ETF
+    "DIA":    "DIA",    # Dow Jones ETF
+    "SPY":    "SPY",    # S&P 500 ETF (backup)
 }
 
 HEADERS = {
