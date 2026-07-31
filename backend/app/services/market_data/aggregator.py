@@ -4,6 +4,7 @@ from app.services.market_data.coingecko import coingecko_provider
 from app.services.market_data.kucoin import kucoin_provider
 from app.services.market_data.mock_provider import mock_provider
 from app.services.market_data.polygon import polygon_provider
+from app.services.market_data.yahoo import yahoo_provider, YAHOO_SYMBOLS
 from app.services.market_data.providers import (
     alpha_vantage_provider,
     binance_provider,
@@ -28,6 +29,15 @@ class MarketDataAggregator:
             return await mock_provider.get_price(asset)
 
         # Forex / Stocks / Commodities: try real provider → mock
+        # Special case: Silver & Oil → Yahoo Finance (TwelveData free tier doesn't support)
+        if asset.symbol in YAHOO_SYMBOLS:
+            for provider in [yahoo_provider, mock_provider]:
+                try:
+                    return await provider.get_price(asset)
+                except Exception:
+                    continue
+            return await mock_provider.get_price(asset)
+
         provider = self._provider_for(asset)
         try:
             return await provider.get_price(asset)
@@ -66,6 +76,16 @@ class MarketDataAggregator:
                                    range=history_range, bars=bars, source="mock")
 
         # Forex / Stocks / Indices
+        # Special case: Silver & Oil → Yahoo Finance
+        if asset.symbol in YAHOO_SYMBOLS:
+            for provider, src in [(yahoo_provider, "yahoo"), (mock_provider, "mock")]:
+                try:
+                    bars = await provider.get_history(asset, history_range)
+                    return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
+                                          range=history_range, bars=bars, source=src)
+                except Exception:
+                    continue
+
         provider = self._provider_for(asset)
         source_name = "twelvedata" if asset.market_type == MarketType.forex else "polygon"
         try:

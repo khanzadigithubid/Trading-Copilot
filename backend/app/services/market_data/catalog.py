@@ -24,10 +24,10 @@ DEFAULT_ASSETS: list[AssetDefinition] = [
     AssetDefinition("USDCAD", MarketType.forex, "US Dollar / Canadian Dollar", "USD/CAD"),
     AssetDefinition("USDCHF", MarketType.forex, "US Dollar / Swiss Franc", "USD/CHF"),
     AssetDefinition("NZDUSD", MarketType.forex, "New Zealand Dollar / US Dollar", "NZD/USD"),
-    # Commodities (via forex pairs / CFD)
+    # Commodities
     AssetDefinition("XAUUSD", MarketType.forex, "Gold / US Dollar", "XAU/USD"),
     AssetDefinition("XAGUSD", MarketType.forex, "Silver / US Dollar", "XAG/USD"),
-    AssetDefinition("USOIL", MarketType.forex, "Crude Oil (WTI)", "USOIL"),
+    AssetDefinition("USOIL",  MarketType.forex, "Crude Oil (WTI)", "WTI/USD"),
     # Crypto — Top coins
     AssetDefinition("BTCUSDT", MarketType.crypto, "Bitcoin", "BTCUSDT"),
     AssetDefinition("ETHUSDT", MarketType.crypto, "Ethereum", "ETHUSDT"),
