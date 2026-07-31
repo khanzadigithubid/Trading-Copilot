@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/react";
 
+import ChatWidget from "@/components/ChatWidget";
 import Providers from "@/components/Providers";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import "./globals.css";
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>
         <PWAInstallPrompt />
+        <ChatWidget />
         <Analytics />
       </body>
     </html>
