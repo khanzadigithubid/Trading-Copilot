@@ -16,6 +16,13 @@ const SUGGESTIONS = [
   "What is this platform?",
 ];
 
+const VOICE_LANGUAGES = [
+  { code: "en-US", label: "EN" },
+  { code: "ur-PK", label: "اردو" },
+  { code: "hi-IN", label: "हिंदी" },
+  { code: "ar-SA", label: "عربي" },
+];
+
 async function askPublicChat(query: string): Promise<{ response: string; source: string }> {
   const res = await fetch(`${API_URL}/public/chat`, {
     method: "POST",
@@ -53,6 +60,7 @@ export default function ChatWidget() {
   const [listening, setListening] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
+  const [voiceLang, setVoiceLang] = useState("en-US");
   const bottomRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
@@ -80,7 +88,7 @@ export default function ChatWidget() {
     if (!SR) return;
 
     const rec = new SR();
-    rec.lang = "en-US";
+    rec.lang = voiceLang;
     rec.interimResults = false;
     rec.maxAlternatives = 1;
     rec.onstart = () => setListening(true);
@@ -140,6 +148,18 @@ export default function ChatWidget() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {/* Language selector */}
+              {voiceSupported && (
+                <select
+                  value={voiceLang}
+                  onChange={(e) => setVoiceLang(e.target.value)}
+                  className="rounded-lg bg-slate-950/70 text-slate-950 text-xs px-1.5 py-1 border-0 font-semibold cursor-pointer"
+                >
+                  {VOICE_LANGUAGES.map((l) => (
+                    <option key={l.code} value={l.code}>{l.label}</option>
+                  ))}
+                </select>
+              )}
               {voiceSupported && (
                 <button
                   onClick={() => setVoiceEnabled((p) => !p)}
@@ -226,7 +246,7 @@ export default function ChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !loading && handleSend()}
-              placeholder={listening ? "Listening..." : "Ask about any market..."}
+              placeholder={listening ? "Listening... / سن رہا ہوں..." : "Ask in any language... | کوئی بھی زبان میں پوچھیں"}
               disabled={loading || listening}
               className="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 outline-none focus:border-emerald-500 disabled:opacity-50"
             />

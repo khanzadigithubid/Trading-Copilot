@@ -25,7 +25,8 @@ class PublicChatResponse(BaseModel):
 
 @router.post("/chat", response_model=PublicChatResponse)
 async def public_chat(payload: PublicChatRequest, db: Session = Depends(get_db)):
-    """Public chat — no login needed. Used by landing page widget."""
+    """Public chat — no login needed. Used by landing page widget. Supports all languages."""
+    # Detect language hint from query and pass to chat service
     result = await chat_service.answer_query(
         query=payload.query,
         db=db,

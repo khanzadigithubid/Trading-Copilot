@@ -31,7 +31,14 @@ class ChatService:
             try:
                 response = await ask_claude(
                     f"""You are an AI trading assistant for a multi-market dashboard (Forex, Crypto, Stocks).
-Answer the user's question clearly and concisely in plain language.
+IMPORTANT: Detect the language of the user's question and reply in the SAME language.
+If user asks in Urdu — reply in Urdu.
+If user asks in Hindi — reply in Hindi.
+If user asks in Arabic — reply in Arabic.
+If user asks in English — reply in English.
+Always match the user's language exactly.
+
+Answer the user's question clearly and concisely.
 Include relevant numbers from the context. Do not give definitive financial advice — frame as educational analysis.
 If data is missing, say so honestly.
 
