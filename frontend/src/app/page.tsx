@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import ChatWidget from "@/components/ChatWidget";
 
 const FEATURES = [
   {
@@ -647,6 +648,9 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* ── Chat Widget ── */}
+      <ChatWidget />
 
       {/* ── Footer ── */}
       <footer className="border-t border-slate-800 px-6 py-10 text-center text-xs text-slate-600">
