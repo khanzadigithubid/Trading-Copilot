@@ -1,6 +1,7 @@
 from app.schemas.asset import HistoryRange, HistoryResponse, MarketType, PriceResponse
 from app.services.market_data.catalog import AssetDefinition, get_asset, list_assets
 from app.services.market_data.coingecko import coingecko_provider
+from app.services.market_data.exchangerate import exchangerate_provider
 from app.services.market_data.kucoin import kucoin_provider
 from app.services.market_data.mock_provider import mock_provider
 from app.services.market_data.polygon import polygon_provider
@@ -28,8 +29,16 @@ class MarketDataAggregator:
                     continue
             return await mock_provider.get_price(asset)
 
-        # Forex / Stocks / Commodities: try real provider → mock
-        # Special case: Silver & Oil → Yahoo Finance (TwelveData free tier doesn't support)
+        # Forex: TwelveData → ExchangeRate (free fallback) → mock
+        if asset.market_type == MarketType.forex and asset.symbol not in YAHOO_SYMBOLS:
+            for provider in [twelve_data_provider, exchangerate_provider, mock_provider]:
+                try:
+                    return await provider.get_price(asset)
+                except Exception:
+                    continue
+            return await mock_provider.get_price(asset)
+
+        # Special case: Yahoo symbols (Silver, Oil, Gold, indices, AMZN, META)
         if asset.symbol in YAHOO_SYMBOLS:
             for provider in [yahoo_provider, mock_provider]:
                 try:
@@ -38,11 +47,11 @@ class MarketDataAggregator:
                     continue
             return await mock_provider.get_price(asset)
 
+        # Stocks: Polygon → mock
         provider = self._provider_for(asset)
         try:
             return await provider.get_price(asset)
         except Exception:
-            # Stocks: try Polygon as fallback
             if asset.market_type == MarketType.stock:
                 try:
                     return await polygon_provider.get_price(asset)
@@ -75,8 +84,7 @@ class MarketDataAggregator:
             return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
                                    range=history_range, bars=bars, source="mock")
 
-        # Forex / Stocks / Indices
-        # Special case: Silver & Oil → Yahoo Finance
+        # Forex / Stocks / Commodities
         if asset.symbol in YAHOO_SYMBOLS:
             for provider, src in [(yahoo_provider, "yahoo"), (mock_provider, "mock")]:
                 try:

@@ -17,6 +17,8 @@ YAHOO_SYMBOLS: dict[str, str] = {
     "QQQ":    "QQQ",    # NASDAQ 100 ETF
     "DIA":    "DIA",    # Dow Jones ETF
     "SPY":    "SPY",    # S&P 500 ETF (backup)
+    "AMZN":   "AMZN",   # Amazon
+    "META":   "META",   # Meta/Facebook
 }
 
 HEADERS = {
