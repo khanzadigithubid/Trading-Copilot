@@ -143,16 +143,39 @@ User Question: {query}""",
         blocks: list[str] = []
         for symbol in symbols:
             try:
+                # Always get live price first
                 price = await aggregator.get_price(symbol)
-                signal = await signal_engine.get_latest_signal(symbol, db)
-                blocks.append(
-                    f"- {symbol} ({price.market_type.value}): price={price.price}, "
-                    f"change={price.change_percent}%, signal={signal.signal.value}, "
-                    f"confidence={signal.confidence}%, risk={signal.risk_level.value}. "
-                    f"Reasoning: {signal.reasoning[:200]}"
+                price_line = (
+                    f"- {symbol} ({price.market_type.value}): "
+                    f"current price = {price.price}, "
+                    f"24h change = {price.change_percent}%"
                 )
+
+                # Try to get AI signal (may fail for some assets)
+                try:
+                    signal = await signal_engine.get_latest_signal(symbol, db)
+                    price_line += (
+                        f", AI signal = {signal.signal.value} "
+                        f"({signal.confidence:.0f}% confidence, {signal.risk_level.value} risk). "
+                        f"Reasoning: {signal.reasoning[:200]}"
+                    )
+                except Exception:
+                    # No signal available — just use price + basic analysis
+                    change = price.change_percent or 0
+                    if change > 2:
+                        trend = "strongly bullish (+{:.1f}% today)".format(change)
+                    elif change > 0:
+                        trend = "slightly bullish (+{:.1f}% today)".format(change)
+                    elif change > -2:
+                        trend = "slightly bearish ({:.1f}% today)".format(change)
+                    else:
+                        trend = "strongly bearish ({:.1f}% today)".format(change)
+                    price_line += f". Trend: {trend}."
+
+                blocks.append(price_line)
             except Exception:
-                blocks.append(f"- {symbol}: data unavailable")
+                blocks.append(f"- {symbol}: unable to fetch live price")
+
         return "\n".join(blocks)
 
     def _fallback_response(self, query: str, symbols: list[str], context: str) -> str:
