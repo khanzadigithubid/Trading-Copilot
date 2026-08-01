@@ -20,7 +20,30 @@ const NAV_LINKS = [
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
 
-  return (
+  async function handlePost(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const subject = (form.elements.namedItem("subject") as HTMLSelectElement).value;
+    const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value;
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, subject, message }),
+        signal: AbortSignal.timeout(15000),
+      });
+      if (res.ok) {
+        setSent(true);
+      } else {
+        alert("Failed to send. Please try again.");
+      }
+    } catch {
+      alert("Network error. Please try again.");
+    }
+  }
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <nav className="border-b border-slate-800 bg-slate-900 sticky top-0 z-40">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
@@ -105,13 +128,14 @@ export default function ContactPage() {
                 <h3 className="text-lg font-semibold">Send a message</h3>
                 <form
                   className="mt-5 space-y-4"
-                  onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+                  onSubmit={handlePost}
                 >
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Name</label>
                     <input
                       required
                       type="text"
+                      name="name"
                       placeholder="Your name"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500"
                     />
@@ -121,13 +145,14 @@ export default function ContactPage() {
                     <input
                       required
                       type="email"
+                      name="email"
                       placeholder="you@example.com"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Subject</label>
-                    <select className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500">
+                    <select name="subject" className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500">
                       <option>General question</option>
                       <option>Bug report</option>
                       <option>Feature request</option>
@@ -139,6 +164,7 @@ export default function ContactPage() {
                     <label className="mb-1 block text-sm text-slate-400">Message</label>
                     <textarea
                       required
+                      name="message"
                       rows={4}
                       placeholder="Tell us what's on your mind..."
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500 resize-none"

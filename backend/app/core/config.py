@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     # Admin — set your email here to access /admin/stats
     admin_email: str = ""
 
+    # Resend email API (https://resend.com — free 100 emails/day)
+    resend_api_key: str = ""
+    contact_email: str = "memonbisma22@gmail.com"
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
