@@ -97,7 +97,8 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token.error === "RefreshFailed") {
-        return { ...session, error: "RefreshFailed" };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return { ...session, error: "RefreshFailed" } as any;
       }
       if (session.user) {
         session.user.id = token.sub || "";
