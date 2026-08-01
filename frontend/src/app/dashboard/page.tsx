@@ -37,6 +37,13 @@ export default function DashboardPage() {
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<DashTab>("overview");
 
+  // Auto sign out if token expired
+  useEffect(() => {
+    if ((session as { error?: string })?.error === "TokenExpired") {
+      signOut({ callbackUrl: "/login" });
+    }
+  }, [session]);
+
   // Read ?tab= from URL on mount (used by home page feature cards)
   useEffect(() => {
     const tab = searchParams.get("tab") as DashTab | null;

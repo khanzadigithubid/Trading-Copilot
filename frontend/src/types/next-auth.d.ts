@@ -10,6 +10,7 @@ declare module "next-auth" {
       riskTolerance: number;
       capital: number;
     };
+    error?: string;
   }
 
   interface User {
@@ -24,5 +25,7 @@ declare module "next-auth/jwt" {
     accessToken?: string;
     riskTolerance?: number;
     capital?: number;
+    issuedAt?: number;
+    error?: string;
   }
 }
