@@ -2,8 +2,8 @@
 
 export default function OfflinePage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-6 px-6 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-800 text-3xl">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-6 px-4 sm:px-6 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-800 text-xl sm:text-3xl">
         📡
       </div>
       <div>
@@ -14,7 +14,7 @@ export default function OfflinePage() {
       </div>
       <button
         onClick={() => window.location.reload()}
-        className="rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+        className="rounded-full bg-emerald-500 px-4 sm:px-6 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
       >
         Try again
       </button>

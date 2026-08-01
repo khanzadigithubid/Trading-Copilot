@@ -47,7 +47,7 @@ function StatCard({
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs text-slate-500">{label}</p>
-          <p className={`mt-1.5 text-3xl font-bold font-mono ${color}`}>{value}</p>
+          <p className={`mt-1.5 text-xl sm:text-3xl font-bold font-mono ${color}`}>{value}</p>
           {sub && <p className="mt-0.5 text-xs text-slate-500">{sub}</p>}
         </div>
         <span className="text-2xl">{icon}</span>
@@ -91,10 +91,10 @@ export default function AdminPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-4">
-        <span className="text-5xl">🔒</span>
+        <span className="text-3xl sm:text-5xl">🔒</span>
         <h1 className="text-2xl font-bold">Access Denied</h1>
         <p className="text-slate-400">{error}</p>
-        <Link href="/dashboard" className="rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
+        <Link href="/dashboard" className="rounded-full bg-emerald-500 px-4 sm:px-6 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
           Go to Dashboard
         </Link>
       </div>
@@ -107,7 +107,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-slate-950 text-slate-100">
       {/* Header */}
       <header className="border-b border-slate-800 bg-slate-900 sticky top-0 z-40">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-sm">AI</div>
             <div>
@@ -126,7 +126,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-6 py-8 space-y-8">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-8">
 
         {/* User Stats */}
         <section>

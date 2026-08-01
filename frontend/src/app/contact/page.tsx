@@ -121,7 +121,7 @@ export default function ContactPage() {
           <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5 sm:p-6">
             {sent ? (
               <div className="flex flex-col items-center justify-center text-center py-10">
-                <span className="text-5xl">✅</span>
+                <span className="text-3xl sm:text-5xl">✅</span>
                 <h3 className="mt-4 text-xl font-bold">Message sent!</h3>
                 <p className="mt-2 text-slate-400 text-sm">We&apos;ll get back to you within 24 hours.</p>
                 <button onClick={() => setSent(false)} className="mt-6 text-sm text-emerald-400 hover:underline">
