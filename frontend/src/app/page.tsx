@@ -4,6 +4,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
+import MobileNav from "@/components/MobileNav";
+
+const NAV_LINKS = [
+  { href: "/markets", label: "Markets", icon: "🌍" },
+  { href: "/markets/crypto", label: "Crypto", icon: "₿" },
+  { href: "/markets/forex", label: "Forex", icon: "💱" },
+  { href: "/markets/stocks", label: "Stocks", icon: "📈" },
+  { href: "/markets/commodities", label: "Commodities", icon: "🪙" },
+  { href: "/markets/indices", label: "Indices", icon: "🏦" },
+  { href: "/learn", label: "Learn", icon: "📖" },
+  { href: "/news", label: "News", icon: "📰" },
+  { href: "/leaderboard", label: "Leaderboard", icon: "🏆" },
+  { href: "/about", label: "About", icon: "ℹ️" },
+  { href: "/contact", label: "Contact", icon: "📬" },
+];
 
 const FEATURES = [
   {
@@ -115,12 +130,14 @@ export default function HomePage() {
       {/* ── Nav ── */}
       <nav className="fixed top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">
               AI
             </div>
             <span className="font-semibold text-slate-100">Trading Copilot</span>
-          </div>
+          </Link>
+
+          {/* Desktop nav */}
           <div className="hidden sm:flex items-center gap-5 text-sm text-slate-400">
             <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
             <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
@@ -128,16 +145,20 @@ export default function HomePage() {
             <Link href="/leaderboard" className="hover:text-slate-100 transition">Leaderboard</Link>
             <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
+
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-slate-400 hover:text-slate-100 transition">
+            {/* Desktop auth */}
+            <Link href="/login" className="hidden sm:block text-sm text-slate-400 hover:text-slate-100 transition">
               Sign in
             </Link>
             <Link
               href="/register"
-              className="rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition"
+              className="hidden sm:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition"
             >
               Get started
             </Link>
+            {/* Mobile hamburger */}
+            <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>
       </nav>
