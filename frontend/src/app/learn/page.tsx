@@ -248,7 +248,7 @@ export default function LearnPage() {
     : ARTICLES.filter((a) => a.category === active || a.level === active);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       {/* Nav */}
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
@@ -270,7 +270,7 @@ export default function LearnPage() {
       </nav>
 
       {/* Hero */}
-      <section className="border-b border-slate-800 bg-slate-900/30 px-6 py-14 text-center">
+      <section className="border-b border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Education</p>
         <h1 className="mt-3 text-4xl font-bold sm:text-5xl">Learn to Trade</h1>
         <p className="mx-auto mt-4 max-w-xl text-slate-400">
@@ -288,7 +288,7 @@ export default function LearnPage() {
       </section>
 
       {/* Filters */}
-      <div className="mx-auto max-w-5xl px-6 pt-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 pt-8">
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((cat) => (
             <button
@@ -305,7 +305,7 @@ export default function LearnPage() {
       </div>
 
       {/* Articles */}
-      <div className="mx-auto max-w-5xl px-6 py-8 space-y-4">
+      <div className="mx-auto max-w-5xl px-4 sm:px-4 sm:px-6 py-6 sm:py-8 space-y-4">
         {filtered.map((article) => (
           <div key={article.id} className="rounded-2xl border border-slate-800 bg-slate-900/50 overflow-hidden">
             {/* Header */}
@@ -356,7 +356,7 @@ export default function LearnPage() {
       </div>
 
       {/* CTA */}
-      <section className="border-t border-slate-800 px-6 py-14 text-center">
+      <section className="border-t border-slate-800 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <h2 className="text-2xl font-bold">Ready to apply what you learned?</h2>
         <p className="mt-3 text-slate-400">Use AI signals + paper trading to practice — zero risk.</p>
         <Link href="/register" className="mt-6 inline-block rounded-full bg-emerald-500 px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">

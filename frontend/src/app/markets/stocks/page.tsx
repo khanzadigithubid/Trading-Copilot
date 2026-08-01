@@ -133,7 +133,7 @@ const STOCKS = [
 
 export default function StocksPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <Link href="/" className="flex items-center gap-2">
@@ -153,7 +153,7 @@ export default function StocksPage() {
         </div>
       </nav>
 
-      <section className="border-b border-violet-500/20 bg-violet-500/5 px-6 py-14 text-center">
+      <section className="border-b border-violet-500/20 bg-violet-500/5 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <span className="text-5xl">📈</span>
         <h1 className="mt-4 text-4xl font-bold text-violet-400 sm:text-5xl">US Stocks</h1>
         <p className="mx-auto mt-4 max-w-2xl text-slate-300">
@@ -170,7 +170,7 @@ export default function StocksPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-6 py-12 space-y-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 space-y-8">
         {STOCKS.map((stock) => (
           <div key={stock.symbol} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -189,7 +189,7 @@ export default function StocksPage() {
 
             <p className="mt-4 leading-relaxed text-slate-300">{stock.description}</p>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 grid-cols-2 sm:grid-cols-3">
               {[["Market Cap", stock.market_cap], ["Price Range (1Y)", stock.price_range], ["Founded", stock.founded]].map(([l, v]) => (
                 <div key={l} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
                   <p className="text-xs text-slate-500">{l}</p>
@@ -225,7 +225,7 @@ export default function StocksPage() {
         ))}
       </div>
 
-      <section className="border-t border-slate-800 px-6 py-14 text-center">
+      <section className="border-t border-slate-800 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <h2 className="text-2xl font-bold">Get AI signals for all 7 stocks</h2>
         <p className="mt-3 text-slate-400">BUY/SELL/HOLD with plain-English reasoning. Free.</p>
         <Link href="/register" className="mt-6 inline-block rounded-full bg-emerald-500 px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Start free →</Link>

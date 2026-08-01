@@ -41,7 +41,7 @@ export default function ContactPage() {
         </div>
       </nav>
 
-      <div className="mx-auto max-w-4xl px-6 py-16">
+      <div className="mx-auto max-w-4xl px-4 sm:px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
         <div className="text-center">
           <h1 className="text-4xl font-bold">Contact Us</h1>
           <p className="mt-4 text-slate-400">Questions, feedback, or collaboration? We&apos;d love to hear from you.</p>
@@ -177,7 +177,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <footer className="border-t border-slate-800 px-6 py-8 text-center text-xs text-slate-600">
+      <footer className="border-t border-slate-800 px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-600">
         <div className="flex flex-wrap items-center justify-center gap-4 mb-3">
           <Link href="/" className="hover:text-slate-400">Home</Link>
           <Link href="/about" className="hover:text-slate-400">About</Link>

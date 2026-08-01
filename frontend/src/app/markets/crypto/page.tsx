@@ -155,7 +155,7 @@ const COINS = [
 
 export default function CryptoPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       {/* Nav */}
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
@@ -177,7 +177,7 @@ export default function CryptoPage() {
       </nav>
 
       {/* Hero */}
-      <section className="border-b border-amber-500/20 bg-amber-500/5 px-6 py-14 text-center">
+      <section className="border-b border-amber-500/20 bg-amber-500/5 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <span className="text-5xl">₿</span>
         <h1 className="mt-4 text-4xl font-bold text-amber-400 sm:text-5xl">Cryptocurrency</h1>
         <p className="mx-auto mt-4 max-w-2xl text-slate-300">
@@ -193,7 +193,7 @@ export default function CryptoPage() {
       </section>
 
       {/* Coins */}
-      <div className="mx-auto max-w-5xl px-6 py-12 space-y-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 space-y-8">
         {COINS.map((coin) => (
           <div key={coin.symbol} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
             {/* Header */}
@@ -219,7 +219,7 @@ export default function CryptoPage() {
             <p className="mt-4 leading-relaxed text-slate-300">{coin.description}</p>
 
             {/* Stats grid */}
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-5 grid gap-3 grid-cols-2 lg:grid-cols-4">
               {[
                 ["Founder", coin.founder],
                 ["Price Range (1Y)", coin.price_range],
@@ -275,7 +275,7 @@ export default function CryptoPage() {
       </div>
 
       {/* CTA */}
-      <section className="border-t border-slate-800 px-6 py-14 text-center">
+      <section className="border-t border-slate-800 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <h2 className="text-2xl font-bold">Get AI signals for all crypto assets</h2>
         <p className="mt-3 text-slate-400">BUY/SELL/HOLD with plain-English reasoning. Free.</p>
         <Link href="/register" className="mt-6 inline-block rounded-full bg-emerald-500 px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">

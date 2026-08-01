@@ -36,7 +36,7 @@ const TECH = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <Link href="/" className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function AboutPage() {
       </nav>
 
       {/* Hero */}
-      <section className="px-6 py-20 text-center">
+      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-20 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 font-black text-2xl">AI</div>
         <h1 className="mt-6 text-4xl font-bold sm:text-5xl">About AI Trading Copilot</h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-400">
@@ -67,7 +67,7 @@ export default function AboutPage() {
       </section>
 
       {/* Mission */}
-      <section className="border-y border-slate-800 bg-slate-900/30 px-6 py-16">
+      <section className="border-y border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
         <div className="mx-auto max-w-4xl">
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -95,7 +95,7 @@ export default function AboutPage() {
       </section>
 
       {/* What makes us different */}
-      <section className="px-6 py-16">
+      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
         <div className="mx-auto max-w-5xl">
           <p className="text-center text-xs uppercase tracking-widest text-emerald-400">What Makes Us Different</p>
           <h2 className="mt-3 text-center text-3xl font-bold">Features that exist nowhere else</h2>
@@ -112,7 +112,7 @@ export default function AboutPage() {
       </section>
 
       {/* Tech stack */}
-      <section className="border-y border-slate-800 bg-slate-900/30 px-6 py-16">
+      <section className="border-y border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
         <div className="mx-auto max-w-4xl">
           <p className="text-center text-xs uppercase tracking-widest text-emerald-400">Built With</p>
           <h2 className="mt-3 text-center text-3xl font-bold">Modern open-source tech stack</h2>
@@ -130,7 +130,7 @@ export default function AboutPage() {
       </section>
 
       {/* Markets */}
-      <section className="px-6 py-16 text-center">
+      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16 text-center">
         <p className="text-xs uppercase tracking-widest text-emerald-400">Coverage</p>
         <h2 className="mt-3 text-3xl font-bold">27 Markets. 5 Asset Classes.</h2>
         <p className="mt-4 text-slate-400">Forex · Crypto · Stocks · Commodities · Indices</p>
@@ -144,7 +144,7 @@ export default function AboutPage() {
       </section>
 
       {/* Disclaimer */}
-      <section className="border-t border-slate-800 bg-slate-900/20 px-6 py-10">
+      <section className="border-t border-slate-800 bg-slate-900/20 px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold text-slate-300">⚠️ Important Disclaimer</p>
           <p className="mt-3 text-sm leading-relaxed text-slate-500">
@@ -156,7 +156,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-800 px-6 py-8 text-center text-xs text-slate-600">
+      <footer className="border-t border-slate-800 px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-600">
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Link href="/" className="hover:text-slate-400">Home</Link>
           <Link href="/markets" className="hover:text-slate-400">Markets</Link>

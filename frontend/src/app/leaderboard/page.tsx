@@ -58,7 +58,7 @@ export default function LeaderboardPage() {
   }) : [];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <Link href="/" className="flex items-center gap-2">
@@ -79,7 +79,7 @@ export default function LeaderboardPage() {
       </nav>
 
       {/* Hero */}
-      <section className="border-b border-slate-800 bg-slate-900/30 px-6 py-14 text-center">
+      <section className="border-b border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Community</p>
         <h1 className="mt-3 text-4xl font-bold sm:text-5xl">🏆 Leaderboard</h1>
         <p className="mx-auto mt-4 max-w-xl text-slate-400">
@@ -101,7 +101,7 @@ export default function LeaderboardPage() {
         )}
       </section>
 
-      <div className="mx-auto max-w-4xl px-6 py-10">
+      <div className="mx-auto max-w-4xl px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10">
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
           {([["signals", "📊 Most Signals"], ["pnl", "💰 Best P&L"], ["votes", "▲ Most Votes"]] as const).map(([id, label]) => (

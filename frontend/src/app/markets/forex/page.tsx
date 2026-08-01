@@ -141,7 +141,7 @@ const PAIRS = [
 
 export default function ForexPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       {/* Nav */}
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
@@ -163,7 +163,7 @@ export default function ForexPage() {
       </nav>
 
       {/* Hero */}
-      <section className="border-b border-blue-500/20 bg-blue-500/5 px-6 py-14 text-center">
+      <section className="border-b border-blue-500/20 bg-blue-500/5 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <span className="text-5xl">💱</span>
         <h1 className="mt-4 text-4xl font-bold text-blue-400 sm:text-5xl">Forex Market</h1>
         <p className="mx-auto mt-4 max-w-2xl text-slate-300">
@@ -179,7 +179,7 @@ export default function ForexPage() {
       </section>
 
       {/* What is Forex */}
-      <div className="mx-auto max-w-5xl px-6 py-10">
+      <div className="mx-auto max-w-5xl px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10">
         <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
           <h2 className="text-xl font-bold text-slate-100">What is Forex Trading?</h2>
           <p className="mt-3 leading-relaxed text-slate-300">
@@ -203,7 +203,7 @@ export default function ForexPage() {
       </div>
 
       {/* Currency pairs */}
-      <div className="mx-auto max-w-5xl px-6 pb-12 space-y-6">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-12 space-y-6">
         <h2 className="text-2xl font-bold">Currency Pairs Covered</h2>
         {PAIRS.map((pair) => (
           <div key={pair.symbol} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
@@ -227,7 +227,7 @@ export default function ForexPage() {
 
             <p className="mt-4 leading-relaxed text-slate-300">{pair.description}</p>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-4 grid gap-3 grid-cols-2 lg:grid-cols-4">
               {[
                 ["Daily Volume", pair.daily_volume],
                 ["Typical Spread", pair.spread],
@@ -257,7 +257,7 @@ export default function ForexPage() {
         ))}
       </div>
 
-      <section className="border-t border-slate-800 px-6 py-14 text-center">
+      <section className="border-t border-slate-800 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <h2 className="text-2xl font-bold">Trade Forex with AI Signals</h2>
         <p className="mt-3 text-slate-400">Get BUY/SELL signals with reasoning for all 7 pairs. Free.</p>
         <Link href="/register" className="mt-6 inline-block rounded-full bg-emerald-500 px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">

@@ -144,7 +144,7 @@ export default function MarketsPage() {
       </nav>
 
       {/* Hero */}
-      <section className="border-b border-slate-800 bg-slate-900/30 px-6 py-16 text-center">
+      <section className="border-b border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16 text-center">
         <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Markets</p>
         <h1 className="mt-3 text-4xl font-bold sm:text-5xl">27 Markets. One Platform.</h1>
         <p className="mx-auto mt-4 max-w-xl text-slate-400">
@@ -158,9 +158,9 @@ export default function MarketsPage() {
 
       {/* Stats */}
       <div className="border-b border-slate-800 bg-slate-900/20">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-slate-800 sm:grid-cols-4">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 sm:grid-cols-4 gap-px bg-slate-800">
           {TOTAL_STATS.map((s) => (
-            <div key={s.label} className="px-6 py-5 text-center">
+            <div key={s.label} className="px-4 py-4 text-center bg-slate-900/20">
               <p className="text-2xl font-bold text-emerald-400">{s.value}</p>
               <p className="mt-1 text-xs text-slate-400">{s.label}</p>
             </div>
@@ -169,7 +169,7 @@ export default function MarketsPage() {
       </div>
 
       {/* Filter tabs */}
-      <div className="mx-auto max-w-6xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-4 sm:px-6 py-6 sm:py-8">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActive("all")}
@@ -189,7 +189,7 @@ export default function MarketsPage() {
         </div>
 
         {/* Market cards */}
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((market) => (
             <Link
               key={market.id}
@@ -226,7 +226,7 @@ export default function MarketsPage() {
       </div>
 
       {/* CTA */}
-      <section className="border-t border-slate-800 px-6 py-16 text-center">
+      <section className="border-t border-slate-800 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16 text-center">
         <h2 className="text-2xl font-bold">Ready to trade with AI?</h2>
         <p className="mt-3 text-slate-400">Get AI signals, live prices, and professional analytics — free.</p>
         <Link href="/register" className="mt-6 inline-block rounded-full bg-emerald-500 px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">

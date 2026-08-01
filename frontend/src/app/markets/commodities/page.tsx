@@ -70,7 +70,7 @@ const COMMODITIES = [
 
 export default function CommoditiesPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <Link href="/" className="flex items-center gap-2">
@@ -90,7 +90,7 @@ export default function CommoditiesPage() {
         </div>
       </nav>
 
-      <section className="border-b border-yellow-500/20 bg-yellow-500/5 px-6 py-14 text-center">
+      <section className="border-b border-yellow-500/20 bg-yellow-500/5 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <span className="text-5xl">🪙</span>
         <h1 className="mt-4 text-4xl font-bold text-yellow-400 sm:text-5xl">Commodities</h1>
         <p className="mx-auto mt-4 max-w-2xl text-slate-300">
@@ -105,7 +105,7 @@ export default function CommoditiesPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-6 py-12 space-y-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 space-y-8">
         {COMMODITIES.map((c) => (
           <div key={c.symbol} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -121,7 +121,7 @@ export default function CommoditiesPage() {
 
             <p className="mt-4 leading-relaxed text-slate-300">{c.description}</p>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 grid-cols-2 sm:grid-cols-3">
               {[["Price Range (1Y)", c.price_range], ["Daily Volume", c.daily_volume], ["Symbol", c.symbol]].map(([l, v]) => (
                 <div key={l} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
                   <p className="text-xs text-slate-500">{l}</p>
@@ -163,7 +163,7 @@ export default function CommoditiesPage() {
         ))}
       </div>
 
-      <section className="border-t border-slate-800 px-6 py-14 text-center">
+      <section className="border-t border-slate-800 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
         <h2 className="text-2xl font-bold">Trade Gold, Silver & Oil with AI</h2>
         <p className="mt-3 text-slate-400">Live prices + AI signals for all commodities. Free.</p>
         <Link href="/register" className="mt-6 inline-block rounded-full bg-emerald-500 px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Start free →</Link>

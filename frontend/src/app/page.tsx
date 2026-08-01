@@ -213,7 +213,7 @@ export default function HomePage() {
       </section>
 
       {/* ── App Preview (Mock Dashboard) ── */}
-      <section className="border-b border-slate-800 bg-slate-900/20 px-6 py-16">
+      <section className="border-b border-slate-800 bg-slate-900/20 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
         <div className="mx-auto max-w-6xl">
           <p className="text-center text-xs uppercase tracking-[0.2em] text-emerald-400 mb-4">
             See it in action
@@ -408,7 +408,7 @@ export default function HomePage() {
       </section>
 
       {/* ── How It Works ── */}
-      <section className="px-6 py-20 border-b border-slate-800">
+      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-20 border-b border-slate-800">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">How it works</p>
@@ -476,7 +476,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Live Signal Preview ── */}
-      <section className="px-6 py-20 border-b border-slate-800">
+      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-20 border-b border-slate-800">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Live preview</p>
@@ -591,7 +591,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Features ── */}
-      <section className="px-6 py-20">
+      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-20">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Features</p>
@@ -627,7 +627,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Unique callout ── */}
-      <section className="px-6 py-16">
+      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
         <div className="mx-auto max-w-4xl rounded-3xl border border-emerald-500/20 bg-emerald-500/5 p-10 text-center">
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">What makes us different</p>
           <h2 className="mt-4 text-3xl font-bold">
@@ -649,7 +649,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer CTA ── */}
-      <section className="px-6 pb-20 pt-4 text-center">
+      <section className="px-4 sm:px-6 pb-12 sm:pb-20 pt-4 text-center">
         <h2 className="text-2xl font-bold sm:text-3xl">
           Ready to trade smarter?
         </h2>
@@ -670,7 +670,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-slate-800 px-6 py-10 text-center text-xs text-slate-600">
+      <footer className="border-t border-slate-800 px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 text-center text-xs text-slate-600">
         <div className="flex flex-wrap items-center justify-center gap-6 text-slate-500 text-sm mb-6">
           <Link href="/markets" className="hover:text-slate-300 transition">Markets</Link>
           <Link href="/markets/crypto" className="hover:text-slate-300 transition">Crypto</Link>
