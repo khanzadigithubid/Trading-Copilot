@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://postgres:postgres@localhost:5432/trading_copilot"
     secret_key: str = "change-me-in-production-use-a-long-random-string"
     algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60 * 24
+    access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
     cors_origins: str = "http://localhost:3000"
 
     # Anthropic direct (optional)

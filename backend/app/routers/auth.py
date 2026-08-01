@@ -48,3 +48,10 @@ def me(current_user: User = Depends(get_current_user)):
         risk_tolerance=current_user.risk_tolerance,
         capital=current_user.capital,
     )
+
+
+@router.post("/refresh", response_model=TokenResponse)
+def refresh_token(current_user: User = Depends(get_current_user)):
+    """Refresh token — returns a fresh token for valid sessions."""
+    token = create_access_token(str(current_user.id))
+    return TokenResponse(access_token=token)
