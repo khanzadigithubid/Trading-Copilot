@@ -86,9 +86,9 @@ class BacktestEngine:
         history = await aggregator.get_history(payload.symbol, history_range)
         bars = history.bars
 
-        if len(bars) < 40:
+        if len(bars) < 30:
             raise ValueError(
-                f"Not enough historical data: got {len(bars)} bars, need ≥40. "
+                f"Not enough historical data: got {len(bars)} bars, need ≥30. "
                 "Try a longer range or a different asset."
             )
 

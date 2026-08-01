@@ -62,24 +62,29 @@ class KuCoinProvider:
             raise ValueError(f"KuCoin: unknown symbol {asset.symbol}")
 
         interval = KUCOIN_INTERVALS.get(history_range, "1day")
-        limits = {
-            HistoryRange.d1: 24,
-            HistoryRange.w1: 7,
-            HistoryRange.m1: 30,
-            HistoryRange.y1: 52,
+
+        # Calculate time range to get enough bars
+        from datetime import timedelta
+        now = datetime.now(timezone.utc)
+        range_map = {
+            HistoryRange.d1: (now - timedelta(days=1),   24),
+            HistoryRange.w1: (now - timedelta(weeks=1),  7),
+            HistoryRange.m1: (now - timedelta(days=60),  60),   # 2 months = enough bars
+            HistoryRange.y1: (now - timedelta(days=365), 52),
         }
-        limit = limits.get(history_range, 30)
+        start_dt, expected_bars = range_map.get(history_range, (now - timedelta(days=30), 30))
+        start_ts = int(start_dt.timestamp())
 
         async with httpx.AsyncClient(timeout=15.0) as client:
             r = await client.get(
                 f"{self.BASE}/market/candles",
-                params={"symbol": sym, "type": interval},
+                params={"symbol": sym, "type": interval, "startAt": start_ts},
             )
             r.raise_for_status()
-            rows = r.json()["data"]  # [[ts, open, close, high, low, volume, amount], ...]
+            rows = r.json()["data"]
 
         bars: list[OHLCVBar] = []
-        for row in rows[:limit]:
+        for row in rows:
             ts = datetime.fromtimestamp(int(row[0]), tz=timezone.utc)
             bars.append(OHLCVBar(
                 timestamp=ts,

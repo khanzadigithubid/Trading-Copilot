@@ -34,10 +34,10 @@ class BinanceProvider:
 
     async def get_history(self, asset: AssetDefinition, history_range: HistoryRange) -> list[OHLCVBar]:
         interval_map = {
-            HistoryRange.d1: ("1h", 24),
-            HistoryRange.w1: ("1d", 7),
-            HistoryRange.m1: ("1d", 200),
-            HistoryRange.y1: ("1w", 52),
+            HistoryRange.d1: ("1h",  24),
+            HistoryRange.w1: ("1d",  7),
+            HistoryRange.m1: ("1d",  90),   # 90 days — plenty for backtest
+            HistoryRange.y1: ("1w",  52),
         }
         interval, limit = interval_map[history_range]
 
