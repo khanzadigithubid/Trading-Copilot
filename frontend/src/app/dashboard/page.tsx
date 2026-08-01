@@ -80,7 +80,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-950 text-slate-100">
 
       {/* ── Top header ── */}
-      <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-900">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-sm">

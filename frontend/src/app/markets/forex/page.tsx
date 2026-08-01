@@ -143,7 +143,7 @@ export default function ForexPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       {/* Nav */}
-      <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
+      <nav className="border-b border-slate-800 bg-slate-900 sticky top-0 z-40">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">AI</div>
