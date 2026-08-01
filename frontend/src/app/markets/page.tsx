@@ -2,6 +2,21 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import MobileNav from "@/components/MobileNav";
+
+const NAV_LINKS = [
+  { href: "/markets", label: "Markets", icon: "🌍" },
+  { href: "/markets/crypto", label: "Crypto", icon: "₿" },
+  { href: "/markets/forex", label: "Forex", icon: "💱" },
+  { href: "/markets/stocks", label: "Stocks", icon: "📈" },
+  { href: "/markets/commodities", label: "Commodities", icon: "🪙" },
+  { href: "/markets/indices", label: "Indices", icon: "🏦" },
+  { href: "/learn", label: "Learn", icon: "📖" },
+  { href: "/news", label: "News", icon: "📰" },
+  { href: "/leaderboard", label: "Leaderboard", icon: "🏆" },
+  { href: "/about", label: "About", icon: "ℹ️" },
+  { href: "/contact", label: "Contact", icon: "📬" },
+];
 
 const MARKET_CATEGORIES = [
   {
@@ -115,13 +130,15 @@ export default function MarketsPage() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">AI</div>
             <span className="font-semibold">Trading Copilot</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/markets" className="text-sm text-emerald-400 font-medium">Markets</Link>
-            <Link href="/about" className="text-sm text-slate-400 hover:text-slate-100">About</Link>
-            <Link href="/login" className="text-sm text-slate-400 hover:text-slate-100">Sign in</Link>
-            <Link href="/register" className="rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">
-              Get started
-            </Link>
+          <div className="hidden sm:flex items-center gap-4 text-sm text-slate-400">
+            <Link href="/markets" className="hover:text-slate-100">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100">Learn</Link>
+            <Link href="/news" className="hover:text-slate-100">News</Link>
+            <Link href="/about" className="hover:text-slate-100">About</Link>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/register" className="hidden sm:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
+            <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>
       </nav>
