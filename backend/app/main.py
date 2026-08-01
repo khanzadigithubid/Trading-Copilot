@@ -68,3 +68,16 @@ app.include_router(public_chat_router.router)
 @app.get("/health")
 def health():
     return {"status": "ok", "service": settings.app_name}
+
+
+@app.get("/debug/env")
+def debug_env():
+    """Temporary - check if API keys are loaded on Render."""
+    return {
+        "twelve_data_set": bool(settings.twelve_data_api_key),
+        "twelve_data_prefix": settings.twelve_data_api_key[:6] if settings.twelve_data_api_key else "EMPTY",
+        "polygon_set": bool(settings.polygon_api_key),
+        "polygon_prefix": settings.polygon_api_key[:6] if settings.polygon_api_key else "EMPTY",
+        "openrouter_set": bool(settings.openrouter_api_key),
+        "admin_email": settings.admin_email[:10] if settings.admin_email else "EMPTY",
+    }
