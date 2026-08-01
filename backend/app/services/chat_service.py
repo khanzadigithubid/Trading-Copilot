@@ -8,15 +8,58 @@ from sqlalchemy.orm import Session
 
 
 SYMBOL_ALIASES: dict[str, str] = {
+    # Forex
     "EUR/USD": "EURUSD",
     "GBP/USD": "GBPUSD",
     "USD/JPY": "USDJPY",
+    "AUD/USD": "AUDUSD",
+    "USD/CAD": "USDCAD",
+    "USD/CHF": "USDCHF",
+    "NZD/USD": "NZDUSD",
+    "EURO": "EURUSD",
+    "POUND": "GBPUSD",
+    "YEN": "USDJPY",
+    # Crypto
     "BTC": "BTCUSDT",
     "BITCOIN": "BTCUSDT",
     "ETH": "ETHUSDT",
     "ETHEREUM": "ETHUSDT",
     "SOL": "SOLUSDT",
     "SOLANA": "SOLUSDT",
+    "BNB": "BNBUSDT",
+    "XRP": "XRPUSDT",
+    "RIPPLE": "XRPUSDT",
+    "ADA": "ADAUSDT",
+    "CARDANO": "ADAUSDT",
+    "DOGE": "DOGEUSDT",
+    "DOGECOIN": "DOGEUSDT",
+    # Commodities
+    "GOLD": "XAUUSD",
+    "XAU": "XAUUSD",
+    "XAUUSD": "XAUUSD",
+    "SILVER": "XAGUSD",
+    "XAG": "XAGUSD",
+    "OIL": "USOIL",
+    "CRUDE": "USOIL",
+    "WTI": "USOIL",
+    "CRUDE OIL": "USOIL",
+    # Stocks
+    "APPLE": "AAPL",
+    "MICROSOFT": "MSFT",
+    "TESLA": "TSLA",
+    "NVIDIA": "NVDA",
+    "GOOGLE": "GOOGL",
+    "ALPHABET": "GOOGL",
+    "AMAZON": "AMZN",
+    "META": "META",
+    "FACEBOOK": "META",
+    # Indices
+    "S&P": "SPY",
+    "S&P 500": "SPY",
+    "SP500": "SPY",
+    "NASDAQ": "QQQ",
+    "DOW": "DIA",
+    "DOW JONES": "DIA",
 }
 
 KNOWN_SYMBOLS = {asset.symbol for asset in DEFAULT_ASSETS}
@@ -75,16 +118,24 @@ User Question: {query}""",
             if asset:
                 found.append(asset.symbol)
 
-        for alias, symbol in SYMBOL_ALIASES.items():
-            if alias in upper_query and symbol not in found:
-                found.append(symbol)
+        # Check all aliases (sorted by length desc — match longest first)
+        for alias in sorted(SYMBOL_ALIASES.keys(), key=len, reverse=True):
+            if alias.upper() in upper_query:
+                symbol = SYMBOL_ALIASES[alias]
+                if symbol not in found:
+                    found.append(symbol)
 
+        # Check known symbols directly
         for symbol in KNOWN_SYMBOLS:
-            if symbol in upper_query.replace("/", "") and symbol not in found:
+            if symbol.upper() in upper_query.replace("/", "") and symbol not in found:
                 found.append(symbol)
 
+        # Smart defaults based on query keywords
         if not found:
-            found = ["BTCUSDT", "EURUSD"]
+            if any(w in upper_query for w in ["MARKET", "TREND", "BUY", "SELL", "TRADE", "INVEST"]):
+                found = ["BTCUSDT", "XAUUSD", "EURUSD"]
+            else:
+                found = ["BTCUSDT", "EURUSD", "XAUUSD"]
 
         return found[:3]
 
