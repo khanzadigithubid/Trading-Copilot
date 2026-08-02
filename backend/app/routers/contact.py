@@ -17,6 +17,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/contact", tags=["contact"])
 
 
+def _send_smtp(gmail_user: str, gmail_pass: str, to_email: str, msg: MIMEMultipart) -> None:
+    """Blocking SMTP send — runs in thread executor."""
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as server:
+        server.ehlo()
+        server.starttls()
+        server.login(gmail_user, gmail_pass)
+        server.sendmail(gmail_user, [to_email], msg.as_string())
+
+
 class ContactRequest(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     email: EmailStr
@@ -74,14 +83,10 @@ async def send_contact_email(payload: ContactRequest):
 
         msg.attach(MIMEText(html_body, "html"))
 
-        # Send via Gmail SMTP
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(settings.gmail_user, settings.gmail_pass)
-            server.sendmail(
-                from_addr=settings.gmail_user,
-                to_addrs=[settings.contact_email],
-                msg=msg.as_string()
-            )
+        # Run blocking SMTP in thread pool so FastAPI doesn't hang
+        import asyncio
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, _send_smtp, settings.gmail_user, settings.gmail_pass, settings.contact_email, msg)
 
         logger.info(f"[CONTACT] Email sent to {settings.contact_email} from {payload.email}")
         return ContactResponse(
