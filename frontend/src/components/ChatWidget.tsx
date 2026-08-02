@@ -127,7 +127,7 @@ export default function ChatWidget() {
     <>
       {open && (
         <div
-          className="fixed bottom-20 right-4 z-50 w-80 sm:w-96 rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
+          className="fixed bottom-20 right-4 z-40 w-80 sm:w-96 rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
           style={{ maxHeight: "75vh" }}
         >
           {/* Header */}
@@ -244,7 +244,7 @@ export default function ChatWidget() {
       {/* Toggle */}
       <button
         onClick={() => setOpen((p) => !p)}
-        className="fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 transition hover:scale-110 active:scale-95"
+        className="fixed bottom-4 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 transition hover:scale-110 active:scale-95"
       >
         {open ? (
           <span className="text-slate-950 text-xl font-bold">×</span>
