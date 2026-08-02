@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     contact_email: str = "memonbisma22@gmail.com"
 
+    # Gmail SMTP (Python built-in — no extra package needed)
+    # Setup: Gmail → Security → 2FA on → App Passwords → generate 16-char password
+    gmail_user: str = ""
+    gmail_pass: str = ""
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]

@@ -1,11 +1,15 @@
 """
-Contact form endpoint — sends email via Resend API.
-Free tier: 100 emails/day. Get key at https://resend.com
-Note: Free plan sends FROM onboarding@resend.dev TO your verified email only.
+Contact form endpoint — sends email via Gmail SMTP (Python built-in smtplib).
+No extra packages needed. Uses Gmail App Password for authentication.
+Setup: Enable 2FA on Gmail → Generate App Password → Set env vars.
 """
+import smtplib
+import logging
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr, Field
-import logging
 
 from app.core.config import settings
 
@@ -27,19 +31,24 @@ class ContactResponse(BaseModel):
 
 @router.post("", response_model=ContactResponse)
 async def send_contact_email(payload: ContactRequest):
-    """Send contact form email via Resend."""
+    """Send contact form email via Gmail SMTP."""
 
-    if not settings.resend_api_key:
-        # No email key — just log and return success
+    # If Gmail credentials not set — just log and return success
+    if not settings.gmail_user or not settings.gmail_pass:
         logger.info(f"[CONTACT] {payload.name} <{payload.email}>: {payload.subject}")
+        logger.warning("[CONTACT] Gmail credentials not set. Email not sent.")
         return ContactResponse(
             success=True,
             message="Message received! We'll get back to you soon."
         )
 
     try:
-        import resend  # type: ignore
-        resend.api_key = settings.resend_api_key
+        # Build email
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"[Contact] {payload.subject} — from {payload.name}"
+        msg["From"] = settings.gmail_user
+        msg["To"] = settings.contact_email
+        msg["Reply-To"] = payload.email
 
         html_body = f"""
 <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
@@ -63,24 +72,31 @@ async def send_contact_email(payload: ContactRequest):
   </div>
 </div>"""
 
-        params: resend.Emails.SendParams = {
-            "from": "onboarding@resend.dev",
-            "to": [settings.contact_email],
-            "reply_to": payload.email,
-            "subject": f"[Contact] {payload.subject} — from {payload.name}",
-            "html": html_body,
-        }
+        msg.attach(MIMEText(html_body, "html"))
 
-        result = resend.Emails.send(params)
-        logger.info(f"[CONTACT] Email sent successfully. id={result.get('id', 'unknown')}")
+        # Send via Gmail SMTP
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(settings.gmail_user, settings.gmail_pass)
+            server.sendmail(
+                from_addr=settings.gmail_user,
+                to_addrs=[settings.contact_email],
+                msg=msg.as_string()
+            )
 
+        logger.info(f"[CONTACT] Email sent to {settings.contact_email} from {payload.email}")
         return ContactResponse(
             success=True,
             message="Message sent! We'll reply within 24 hours."
         )
 
+    except smtplib.SMTPAuthenticationError:
+        logger.error("[CONTACT] Gmail authentication failed. Check GMAIL_USER and GMAIL_PASS.")
+        raise HTTPException(
+            status_code=500,
+            detail="Email authentication failed. Please contact us directly at memonbisma22@gmail.com"
+        )
     except Exception as e:
-        logger.error(f"[CONTACT] Resend error: {type(e).__name__}: {e}")
+        logger.error(f"[CONTACT] SMTP error: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=500,
             detail=f"Failed to send email: {str(e)}"
