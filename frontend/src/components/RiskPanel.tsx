@@ -73,7 +73,7 @@ export default function RiskPanel({ accessToken, selectedSymbol }: RiskPanelProp
   }
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <h2 className="text-lg font-semibold">Risk Manager</h2>
       <p className="mt-1 text-sm text-slate-400">Position sizing, overtrading alerts, and drawdown monitoring.</p>
 

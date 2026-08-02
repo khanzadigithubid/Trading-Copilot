@@ -111,7 +111,7 @@ export default function TradeJournalPanel({ accessToken }: TradeJournalPanelProp
   };
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-lg font-semibold">AI Trade Journal</h2>

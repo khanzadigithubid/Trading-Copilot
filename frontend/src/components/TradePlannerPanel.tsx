@@ -67,7 +67,7 @@ export default function TradePlannerPanel({ accessToken, selectedSymbol }: Trade
   const fmt = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 6 });
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <h2 className="text-lg font-semibold">📋 AI Trade Planner</h2>
       <p className="mt-0.5 text-sm text-slate-400">Get a complete trade plan — entry zone, stop loss, targets, position size.</p>
 

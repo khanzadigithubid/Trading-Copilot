@@ -54,7 +54,7 @@ export default function PortfolioPanel({ accessToken }: PortfolioPanelProps) {
 
   if (loading) {
     return (
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
         <h2 className="text-lg font-semibold">Portfolio Tracker</h2>
         <p className="mt-4 text-sm text-slate-400">Loading portfolio...</p>
       </section>
@@ -63,7 +63,7 @@ export default function PortfolioPanel({ accessToken }: PortfolioPanelProps) {
 
   if (error) {
     return (
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
         <h2 className="text-lg font-semibold">Portfolio Tracker</h2>
         <p className="mt-4 text-sm text-red-400">{error}</p>
       </section>
@@ -100,7 +100,7 @@ export default function PortfolioPanel({ accessToken }: PortfolioPanelProps) {
   };
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
+import { LoadingCard } from "@/components/ui/LoadingState";
+import { ErrorState } from "@/components/ui/ErrorState";
 
 interface AssetBrief {
   symbol: string;
@@ -38,24 +40,17 @@ export default function BriefingPanel({ accessToken }: BriefingPanelProps) {
       .finally(() => setLoading(false));
   }, [accessToken]);
 
-  if (loading) return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-      <h2 className="text-lg font-semibold mb-4">🌅 Daily Market Briefing</h2>
-      <div className="space-y-3 animate-pulse">
-        {[1,2,3].map(i => <div key={i} className="h-12 rounded-xl bg-slate-800" />)}
-      </div>
-    </section>
-  );
+  if (loading) return <LoadingCard rows={5} />;
 
   if (error || !briefing) return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-      <h2 className="text-lg font-semibold">🌅 Daily Market Briefing</h2>
-      <p className="mt-4 text-sm text-red-400">{error || "Failed to load briefing"}</p>
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
+      <h2 className="text-lg font-semibold mb-4">🌅 Daily Market Briefing</h2>
+      <ErrorState message={error || "Failed to load briefing"} onRetry={() => window.location.reload()} />
     </section>
   );
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-5">
         <div>

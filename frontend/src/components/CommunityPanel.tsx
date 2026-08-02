@@ -201,7 +201,7 @@ export default function CommunityPanel({
   const holdCount = signals.filter((s) => s.signal === "HOLD").length;
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

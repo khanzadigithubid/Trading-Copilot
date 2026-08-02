@@ -60,7 +60,7 @@ export default function SignalPanel({ symbol, accessToken }: SignalPanelProps) {
 
   if (!symbol) {
     return (
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
         <h2 className="text-lg font-semibold">AI Signal</h2>
         <p className="mt-4 text-sm text-slate-400">Select an asset from the table to generate an AI trading signal.</p>
       </section>
@@ -68,7 +68,7 @@ export default function SignalPanel({ symbol, accessToken }: SignalPanelProps) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold">AI Signal — {symbol}</h2>

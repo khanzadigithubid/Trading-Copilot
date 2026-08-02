@@ -95,7 +95,7 @@ export default function MTFSignalPanel({ symbol, accessToken }: MTFSignalPanelPr
 
   if (!symbol) {
     return (
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
         <h2 className="text-lg font-semibold">Multi-Timeframe Analysis</h2>
         <p className="mt-3 text-sm text-slate-400">
           Select an asset to run 1D · 1W · 1M signal analysis.
@@ -105,7 +105,7 @@ export default function MTFSignalPanel({ symbol, accessToken }: MTFSignalPanelPr
   }
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>

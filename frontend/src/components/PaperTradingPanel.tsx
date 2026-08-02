@@ -70,7 +70,7 @@ export default function PaperTradingPanel({ accessToken, selectedSymbol }: Paper
   const openTrades = trades.filter((t) => t.status === "open");
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold">Paper Trading</h2>

@@ -70,7 +70,7 @@ export default function NewsImpactPanel({ accessToken }: NewsImpactPanelProps) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <h2 className="text-lg font-semibold">📰 AI News Impact Analyzer</h2>
       <p className="mt-0.5 text-sm text-slate-400">Paste any news headline — AI tells you how it affects each market.</p>
 

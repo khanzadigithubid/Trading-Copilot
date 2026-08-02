@@ -89,7 +89,7 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
   }, [accessToken]);
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-lg font-semibold">Live Market Prices</h2>

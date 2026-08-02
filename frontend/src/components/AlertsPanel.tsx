@@ -75,7 +75,7 @@ export default function AlertsPanel({ accessToken, selectedSymbol }: AlertsPanel
   const triggered = alerts.filter((a) => a.is_triggered);
 
   return (
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">Price Alerts</h2>
