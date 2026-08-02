@@ -19,6 +19,9 @@ from app.routers import news as news_router
 from app.routers import admin as admin_router
 from app.routers import public_chat as public_chat_router
 from app.routers import contact as contact_router
+from app.routers import briefing as briefing_router
+from app.routers import news_impact as news_impact_router
+from app.routers import trade_planner as trade_planner_router
 from app.services.seed import seed_assets
 
 
@@ -65,6 +68,9 @@ app.include_router(news_router.router)
 app.include_router(admin_router.router)
 app.include_router(public_chat_router.router)
 app.include_router(contact_router.router)
+app.include_router(briefing_router.router)
+app.include_router(news_impact_router.router)
+app.include_router(trade_planner_router.router)
 
 
 @app.get("/health")

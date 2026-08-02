@@ -8,18 +8,21 @@ import { signOut, useSession } from "next-auth/react";
 import AlertsPanel from "@/components/AlertsPanel";
 import AssetDashboard from "@/components/AssetDashboard";
 import BacktestPanel from "@/components/BacktestPanel";
+import BriefingPanel from "@/components/BriefingPanel";
 import CandlestickChart from "@/components/CandlestickChart";
 import ChatPanel from "@/components/ChatPanel";
 import CommunityPanel from "@/components/CommunityPanel";
 import MTFSignalPanel from "@/components/MTFSignalPanel";
+import NewsImpactPanel from "@/components/NewsImpactPanel";
 import PaperTradingPanel from "@/components/PaperTradingPanel";
 import PortfolioPanel from "@/components/PortfolioPanel";
 import RiskPanel from "@/components/RiskPanel";
 import SentimentPanel from "@/components/SentimentPanel";
 import SignalPanel from "@/components/SignalPanel";
+import TradePlannerPanel from "@/components/TradePlannerPanel";
 import TradeJournalPanel from "@/components/TradeJournalPanel";
 
-type DashTab = "overview" | "chart" | "signals" | "trading" | "portfolio" | "alerts" | "community";
+type DashTab = "overview" | "chart" | "signals" | "trading" | "portfolio" | "alerts" | "community" | "ai";
 
 const TABS: { id: DashTab; label: string; icon: string }[] = [
   { id: "overview",   label: "Overview",   icon: "⬡" },
@@ -29,6 +32,7 @@ const TABS: { id: DashTab; label: string; icon: string }[] = [
   { id: "portfolio",  label: "Portfolio",  icon: "📊" },
   { id: "alerts",     label: "Alerts",     icon: "🔔" },
   { id: "community",  label: "Community",  icon: "👥" },
+  { id: "ai",         label: "AI Tools",   icon: "✨" },
 ];
 
 export default function DashboardPage() {
@@ -276,6 +280,17 @@ export default function DashboardPage() {
                 userEmail={session.user.email ?? ""}
               />
               <SentimentPanel />
+            </div>
+          </div>
+        )}
+
+        {/* ════ AI TOOLS TAB ════ */}
+        {activeTab === "ai" && (
+          <div className="space-y-6">
+            <BriefingPanel accessToken={token} />
+            <div className="grid gap-6 lg:grid-cols-2">
+              <TradePlannerPanel accessToken={token} selectedSymbol={selectedSymbol} />
+              <NewsImpactPanel accessToken={token} />
             </div>
           </div>
         )}
