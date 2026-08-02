@@ -32,7 +32,7 @@ export default function MobileNav({ links, showAuth = true }: MobileNavProps) {
 
       {/* Mobile menu drawer */}
       {open && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
