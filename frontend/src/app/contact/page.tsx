@@ -27,9 +27,33 @@ const FAQ = [
   { q: "Is the code open source?", a: "Yes! Full source on GitHub under MIT license." },
 ];
 
+const COUNTRY_CODES = [
+  { code: "+92",  flag: "🇵🇰", name: "Pakistan" },
+  { code: "+91",  flag: "🇮🇳", name: "India" },
+  { code: "+1",   flag: "🇺🇸", name: "USA" },
+  { code: "+44",  flag: "🇬🇧", name: "UK" },
+  { code: "+234", flag: "🇳🇬", name: "Nigeria" },
+  { code: "+62",  flag: "🇮🇩", name: "Indonesia" },
+  { code: "+880", flag: "🇧🇩", name: "Bangladesh" },
+  { code: "+966", flag: "🇸🇦", name: "Saudi Arabia" },
+  { code: "+971", flag: "🇦🇪", name: "UAE" },
+  { code: "+20",  flag: "🇪🇬", name: "Egypt" },
+  { code: "+254", flag: "🇰🇪", name: "Kenya" },
+  { code: "+49",  flag: "🇩🇪", name: "Germany" },
+  { code: "+33",  flag: "🇫🇷", name: "France" },
+  { code: "+86",  flag: "🇨🇳", name: "China" },
+  { code: "+81",  flag: "🇯🇵", name: "Japan" },
+  { code: "+55",  flag: "🇧🇷", name: "Brazil" },
+  { code: "+27",  flag: "🇿🇦", name: "South Africa" },
+  { code: "+61",  flag: "🇦🇺", name: "Australia" },
+  { code: "+90",  flag: "🇹🇷", name: "Turkey" },
+  { code: "+98",  flag: "🇮🇷", name: "Iran" },
+];
+
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [countryCode, setCountryCode] = useState("+92");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,22 +61,22 @@ export default function ContactPage() {
     const form = e.currentTarget;
     const name = (form.elements.namedItem("name") as HTMLInputElement).value;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const phone = (form.elements.namedItem("phone") as HTMLInputElement).value;
     const subject = (form.elements.namedItem("subject") as HTMLSelectElement).value;
     const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value;
+    const fullPhone = phone ? `${countryCode} ${phone}` : "";
+    const fullMessage = fullPhone ? `${message}\n\nPhone: ${fullPhone}` : message;
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, subject, message }),
+        body: JSON.stringify({ name, email, subject, message: fullMessage }),
         signal: AbortSignal.timeout(15000),
       });
-      if (res.ok) {
-        setSent(true);
-      } else {
-        alert("Failed to send. Please try again.");
-      }
+      if (res.ok) { setSent(true); }
+      else { alert("Failed to send. Please try again."); }
     } catch {
       alert("Network error. Please try again.");
     } finally {
@@ -141,6 +165,28 @@ export default function ContactPage() {
                     <label className="mb-1 block text-sm text-slate-400">Email</label>
                     <input required type="email" name="email" placeholder="you@example.com"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500" />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm text-slate-400">Phone <span className="text-slate-600">(optional)</span></label>
+                    <div className="flex gap-2">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-3 text-sm outline-none focus:border-emerald-500 w-36"
+                      >
+                        {COUNTRY_CODES.map((c) => (
+                          <option key={c.code + c.name} value={c.code}>
+                            {c.flag} {c.code} {c.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="3001234567"
+                        className="flex-1 rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Subject</label>
