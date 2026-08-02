@@ -75,10 +75,19 @@ export default function ContactPage() {
         body: JSON.stringify({ name, email, subject, message: fullMessage }),
         signal: AbortSignal.timeout(15000),
       });
-      if (res.ok) { setSent(true); }
-      else { alert("Failed to send. Please try again."); }
-    } catch {
-      alert("Network error. Please try again.");
+      if (res.ok) {
+        setSent(true);
+      } else {
+        const data = await res.json().catch(() => null);
+        const detail = data?.detail || `Error ${res.status}. Please try again.`;
+        alert(detail);
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "TimeoutError") {
+        alert("Request timed out. Please check your connection and try again.");
+      } else {
+        alert("Network error. Please check your connection and try again.");
+      }
     } finally {
       setSending(false);
     }
@@ -201,8 +210,10 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Message</label>
-                    <textarea required name="message" rows={4} placeholder="Tell us what&apos;s on your mind..."
+                    <textarea required name="message" rows={4} placeholder="Tell us what's on your mind..."
+                      minLength={10}
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500 resize-none" />
+                    <p className="mt-1 text-xs text-slate-600">Minimum 10 characters</p>
                   </div>
                   <button type="submit" disabled={sending}
                     className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60 transition">
