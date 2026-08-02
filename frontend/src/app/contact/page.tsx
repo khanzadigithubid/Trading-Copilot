@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 import MobileNav from "@/components/MobileNav";
 
 const NAV_LINKS = [
@@ -54,40 +55,42 @@ export default function ContactPage() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [countryCode, setCountryCode] = useState("+92");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSending(true);
+    setError("");
+
     const form = e.currentTarget;
-    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
-    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const phone = (form.elements.namedItem("phone") as HTMLInputElement).value;
+    const name    = (form.elements.namedItem("name")    as HTMLInputElement).value.trim();
+    const email   = (form.elements.namedItem("email")   as HTMLInputElement).value.trim();
+    const phone   = (form.elements.namedItem("phone")   as HTMLInputElement).value.trim();
     const subject = (form.elements.namedItem("subject") as HTMLSelectElement).value;
-    const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value;
-    const fullPhone = phone ? `${countryCode} ${phone}` : "";
-    const fullMessage = fullPhone ? `${message}\n\nPhone: ${fullPhone}` : message;
+    const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value.trim();
+    const fullPhone = phone ? `${countryCode} ${phone}` : "Not provided";
+
+    const serviceId  = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID  || "";
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
+    const publicKey  = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY  || "";
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const res = await fetch(`${apiUrl}/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, subject, message: fullMessage }),
-        signal: AbortSignal.timeout(15000),
-      });
-      if (res.ok) {
-        setSent(true);
-      } else {
-        const data = await res.json().catch(() => null);
-        const detail = data?.detail || `Error ${res.status}. Please try again.`;
-        alert(detail);
-      }
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name:  name,
+          from_email: email,
+          phone:      fullPhone,
+          subject:    subject,
+          message:    message,
+        },
+        publicKey
+      );
+      setSent(true);
     } catch (err: unknown) {
-      if (err instanceof Error && err.name === "TimeoutError") {
-        alert("Request timed out. Please check your connection and try again.");
-      } else {
-        alert("Network error. Please check your connection and try again.");
-      }
+      console.error("EmailJS error:", err);
+      setError("Failed to send message. Please email us directly at memonbisma22@gmail.com");
     } finally {
       setSending(false);
     }
@@ -134,7 +137,7 @@ export default function ContactPage() {
             </div>
 
             {[
-              { icon: "📧", label: "General Enquiries", value: "hello@trading-copilot.app", href: "mailto:hello@trading-copilot.app" },
+              { icon: "📧", label: "General Enquiries", value: "memonbisma22@gmail.com", href: "mailto:memonbisma22@gmail.com" },
               { icon: "🐛", label: "Bug Reports", value: "GitHub Issues", href: "https://github.com/khanzadigithubid/Trading-Copilot/issues" },
               { icon: "💻", label: "GitHub", value: "khanzadigithubid", href: "https://github.com/khanzadigithubid" },
               { icon: "🌐", label: "Live App", value: "kw-trading-copilot.vercel.app", href: "https://kw-trading-copilot.vercel.app" },
@@ -157,7 +160,8 @@ export default function ContactPage() {
                 <span className="text-3xl sm:text-5xl">✅</span>
                 <h3 className="mt-4 text-xl font-bold">Message sent!</h3>
                 <p className="mt-2 text-slate-400 text-sm">We&apos;ll get back to you within 24 hours.</p>
-                <button onClick={() => setSent(false)} className="mt-6 text-sm text-emerald-400 hover:underline">
+                <button onClick={() => { setSent(false); setError(""); }}
+                  className="mt-6 text-sm text-emerald-400 hover:underline">
                   Send another message
                 </button>
               </div>
@@ -215,6 +219,13 @@ export default function ContactPage() {
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500 resize-none" />
                     <p className="mt-1 text-xs text-slate-600">Minimum 10 characters</p>
                   </div>
+
+                  {error && (
+                    <p className="text-sm text-red-400 bg-red-950/30 border border-red-800 rounded-lg px-4 py-3">
+                      {error}
+                    </p>
+                  )}
+
                   <button type="submit" disabled={sending}
                     className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60 transition">
                     {sending ? "Sending..." : "Send Message"}
