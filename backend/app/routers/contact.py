@@ -5,9 +5,11 @@ Note: Free plan sends FROM onboarding@resend.dev TO your verified email only.
 """
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr, Field
+import logging
 
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/contact", tags=["contact"])
 
 
@@ -28,15 +30,15 @@ async def send_contact_email(payload: ContactRequest):
     """Send contact form email via Resend."""
 
     if not settings.resend_api_key:
-        # No email key — log and return success
-        print(f"[CONTACT] {payload.name} <{payload.email}>: {payload.subject}")
+        # No email key — just log and return success
+        logger.info(f"[CONTACT] {payload.name} <{payload.email}>: {payload.subject}")
         return ContactResponse(
             success=True,
             message="Message received! We'll get back to you soon."
         )
 
     try:
-        import resend
+        import resend  # type: ignore
         resend.api_key = settings.resend_api_key
 
         html_body = f"""
@@ -61,14 +63,16 @@ async def send_contact_email(payload: ContactRequest):
   </div>
 </div>"""
 
-        # Send to admin (free Resend plan: from onboarding@resend.dev to your verified email)
-        resend.Emails.send({
+        params: resend.Emails.SendParams = {
             "from": "onboarding@resend.dev",
             "to": [settings.contact_email],
             "reply_to": payload.email,
             "subject": f"[Contact] {payload.subject} — from {payload.name}",
             "html": html_body,
-        })
+        }
+
+        result = resend.Emails.send(params)
+        logger.info(f"[CONTACT] Email sent successfully. id={result.get('id', 'unknown')}")
 
         return ContactResponse(
             success=True,
@@ -76,8 +80,8 @@ async def send_contact_email(payload: ContactRequest):
         )
 
     except Exception as e:
-        print(f"Email error: {e}")
+        logger.error(f"[CONTACT] Resend error: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=500,
-            detail="Failed to send email. Please try again later."
+            detail=f"Failed to send email: {str(e)}"
         )
