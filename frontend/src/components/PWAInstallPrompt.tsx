@@ -24,9 +24,9 @@ export default function PWAInstallPrompt() {
     }
 
     const handler = (e: Event) => {
-      e.preventDefault();
+      // Don't prevent default — let browser show native banner
+      // We also show our custom prompt after 15 seconds
       setPrompt(e as BeforeInstallPromptEvent);
-      // Delay showing prompt by 15 seconds so it doesn't block UI
       setTimeout(() => setVisible(true), 15000);
     };
 
