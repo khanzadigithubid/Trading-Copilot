@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import emailjs from "@emailjs/browser";
 import MobileNav from "@/components/MobileNav";
 
 const NAV_LINKS = [
@@ -51,6 +50,8 @@ const COUNTRY_CODES = [
   { code: "+98",  flag: "🇮🇷", name: "Iran" },
 ];
 
+const WEB3FORMS_KEY = "dbda848b-a2a9-4954-88c7-5e5362feae49";
+
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -70,27 +71,32 @@ export default function ContactPage() {
     const message = (form.elements.namedItem("message") as HTMLTextAreaElement).value.trim();
     const fullPhone = phone ? `${countryCode} ${phone}` : "Not provided";
 
-    const serviceId  = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID  || "";
-    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
-    const publicKey  = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY  || "";
-
     try {
-      await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          from_name:  name,
-          from_email: email,
-          phone:      fullPhone,
-          subject:    subject,
-          message:    message,
-        },
-        publicKey
-      );
-      setSent(true);
-    } catch (err: unknown) {
-      console.error("EmailJS error:", err);
-      setError("Failed to send message. Please email us directly at memonbisma22@gmail.com");
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          name,
+          email,
+          phone: fullPhone,
+          subject: `[Contact] ${subject} — from ${name}`,
+          message,
+          botcheck: "",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSent(true);
+        form.reset();
+        setCountryCode("+92");
+      } else {
+        setError(data.message || "Failed to send. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please try again or email us at memonbisma22@gmail.com");
     } finally {
       setSending(false);
     }
@@ -160,8 +166,10 @@ export default function ContactPage() {
                 <span className="text-3xl sm:text-5xl">✅</span>
                 <h3 className="mt-4 text-xl font-bold">Message sent!</h3>
                 <p className="mt-2 text-slate-400 text-sm">We&apos;ll get back to you within 24 hours.</p>
-                <button onClick={() => { setSent(false); setError(""); }}
-                  className="mt-6 text-sm text-emerald-400 hover:underline">
+                <button
+                  onClick={() => { setSent(false); setError(""); }}
+                  className="mt-6 text-sm text-emerald-400 hover:underline"
+                >
                   Send another message
                 </button>
               </div>
@@ -169,18 +177,26 @@ export default function ContactPage() {
               <>
                 <h3 className="text-lg font-semibold mb-5">Send a message</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
+
+                  {/* honeypot — hidden spam trap */}
+                  <input type="checkbox" name="botcheck" className="hidden" aria-hidden="true" />
+
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Name</label>
                     <input required type="text" name="name" placeholder="Your name"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500" />
                   </div>
+
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Email</label>
                     <input required type="email" name="email" placeholder="you@example.com"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500" />
                   </div>
+
                   <div>
-                    <label className="mb-1 block text-sm text-slate-400">Phone <span className="text-slate-600">(optional)</span></label>
+                    <label className="mb-1 block text-sm text-slate-400">
+                      Phone <span className="text-slate-600">(optional)</span>
+                    </label>
                     <div className="flex gap-2">
                       <select
                         value={countryCode}
@@ -201,6 +217,7 @@ export default function ContactPage() {
                       />
                     </div>
                   </div>
+
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Subject</label>
                     <select name="subject"
@@ -212,6 +229,7 @@ export default function ContactPage() {
                       <option>Other</option>
                     </select>
                   </div>
+
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Message</label>
                     <textarea required name="message" rows={4} placeholder="Tell us what's on your mind..."
