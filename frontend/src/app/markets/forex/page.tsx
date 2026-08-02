@@ -149,14 +149,14 @@ export default function ForexPage() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">AI</div>
             <span className="font-semibold">Trading Copilot</span>
           </Link>
-          <div className="hidden sm:flex items-center gap-4 text-sm text-slate-400">
+          <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
             <Link href="/markets" className="hover:text-slate-100">Markets</Link>
             <Link href="/learn" className="hover:text-slate-100">Learn</Link>
             <Link href="/news" className="hover:text-slate-100">News</Link>
             <Link href="/about" className="hover:text-slate-100">About</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/register" className="hidden sm:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>

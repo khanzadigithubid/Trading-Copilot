@@ -98,7 +98,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-6 text-sm text-slate-400">
+          <div className="hidden md:flex items-center gap-6 text-sm text-slate-400">
             {selectedSymbol && (
               <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400 font-medium">
                 {selectedSymbol} selected

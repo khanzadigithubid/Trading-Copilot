@@ -83,8 +83,8 @@ export default function HomePage() {
             <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden sm:block text-sm text-slate-400 hover:text-slate-100 transition">Sign in</Link>
-            <Link href="/register" className="hidden sm:block rounded-full bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Get started</Link>
+            <Link href="/login" className="hidden md:block text-sm text-slate-400 hover:text-slate-100 transition">Sign in</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-3 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Get started</Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>

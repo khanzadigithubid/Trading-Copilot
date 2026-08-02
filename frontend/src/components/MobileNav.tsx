@@ -22,7 +22,7 @@ export default function MobileNav({ links, showAuth = true }: MobileNavProps) {
       {/* Hamburger button — only visible on mobile */}
       <button
         onClick={() => setOpen((p) => !p)}
-        className="flex sm:hidden flex-col gap-1.5 p-2 rounded-lg border border-slate-700 hover:bg-slate-800 transition"
+        className="flex md:hidden flex-col gap-1.5 p-2 rounded-lg border border-slate-700 hover:bg-slate-800 transition"
         aria-label="Menu"
       >
         <span className={`block h-0.5 w-5 bg-slate-300 transition-all ${open ? "rotate-45 translate-y-2" : ""}`} />
@@ -32,7 +32,7 @@ export default function MobileNav({ links, showAuth = true }: MobileNavProps) {
 
       {/* Mobile menu drawer */}
       {open && (
-        <div className="fixed inset-0 z-50 sm:hidden">
+        <div className="fixed inset-0 z-50 md:hidden">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
