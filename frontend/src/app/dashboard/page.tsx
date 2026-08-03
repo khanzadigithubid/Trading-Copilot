@@ -107,11 +107,11 @@ export default function DashboardPage() {
             {/* User info */}
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-sm select-none">
-                {(session.user.name || session.user.email || "U")[0].toUpperCase()}
+                {(session.user.email || "U")[0].toUpperCase()}
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="text-sm font-medium text-slate-100">
-                  {session.user.name || session.user.email?.split("@")[0]}
+                  {session.user.email?.split("@")[0]}
                 </span>
                 <span className="text-xs text-slate-500">{session.user.email}</span>
               </div>
@@ -137,10 +137,10 @@ export default function DashboardPage() {
             {/* Mobile: show user name */}
             <div className="flex md:hidden min-w-fit items-center gap-2 border-r border-slate-800 px-3 py-3">
               <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-xs select-none">
-                {(session.user.name || session.user.email || "U")[0].toUpperCase()}
+                {(session.user.email || "U")[0].toUpperCase()}
               </div>
               <span className="text-xs font-medium text-slate-200">
-                {session.user.name || session.user.email?.split("@")[0]}
+                {session.user.email?.split("@")[0]}
               </span>
             </div>
             {[
