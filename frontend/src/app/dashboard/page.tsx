@@ -86,47 +86,54 @@ export default function DashboardPage() {
       {/* ── Top header ── */}
       <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-900">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+
+          {/* Left — Logo */}
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-sm">
               AI
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-emerald-400 leading-none">
-                Trading Copilot
-              </p>
+              <p className="text-xs uppercase tracking-[0.18em] text-emerald-400 leading-none">Trading Copilot</p>
               <p className="text-base font-semibold leading-tight">Dashboard</p>
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-6 text-sm text-slate-400">
+          {/* Center — selected asset pill (desktop only) */}
+          <div className="hidden md:flex flex-1 justify-center">
             {selectedSymbol && (
               <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400 font-medium">
                 {selectedSymbol} selected
               </span>
             )}
-            {/* User info */}
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-sm select-none">
-                {(session.user.email || "U")[0].toUpperCase()}
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-sm font-medium text-slate-100">
-                  {session.user.email?.split("@")[0]}
-                </span>
-                <span className="text-xs text-slate-500">{session.user.email}</span>
-              </div>
-            </div>
           </div>
 
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition"
-          >
-            <span className="hidden sm:inline">Sign out</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
-            </svg>
-          </button>
+          {/* Right — User avatar + name + signout */}
+          <div className="flex items-center gap-3">
+            {/* Avatar + name (desktop) */}
+            <div className="hidden md:flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-slate-950 font-bold text-sm select-none">
+                {(session.user.email || "U")[0].toUpperCase()}
+              </div>
+              <span className="text-sm font-semibold text-slate-100">
+                {session.user.email?.split("@")[0]}
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden md:block h-5 w-px bg-slate-700" />
+
+            {/* Sign out */}
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+              </svg>
+              <span className="hidden sm:inline">Sign out</span>
+            </button>
+          </div>
+
         </div>
       </header>
 
