@@ -137,7 +137,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
 
       {/* ── NAVBAR ── */}
-      <nav className="fixed top-0 z-50 w-full border-b border-slate-800/60 bg-slate-900/95 backdrop-blur-md">
+      <nav className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-900">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6 py-3">
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">AI</div>
@@ -161,7 +161,7 @@ export default function HomePage() {
       </nav>
 
       {/* ── HERO ── */}
-      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 sm:px-6 pt-20 pb-12 text-center">
+      <section className="relative flex min-h-[calc(100vh-57px)] flex-col items-center justify-center px-4 sm:px-6 pb-12 text-center">
         {/* Background glow */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-emerald-500/8 blur-[100px]" />

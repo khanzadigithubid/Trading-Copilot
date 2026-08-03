@@ -40,7 +40,7 @@ export default function MobileNav({ links, showAuth = true }: MobileNavProps) {
           />
 
           {/* Drawer */}
-          <div className="absolute right-0 top-0 h-full w-72 bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col">
+          <div className="absolute right-0 top-0 h-full w-72 bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
               <div className="flex items-center gap-2">
