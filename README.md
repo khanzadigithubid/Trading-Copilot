@@ -3,9 +3,9 @@
 > The AI-powered trading platform that doesn't just show you signals — it explains them.
 > Free for everyone. Forever.
 
-**🌐 Live App:** https://kw-trading-copilot.vercel.app
-**⚙️ Backend API:** https://trading-copilot-api-okr7.onrender.com/docs
-**� GitHub:** https://github.com/khanzadigithubid/Trading-Copilot
+**🌐 Live App:** https://kw-trading-copilot.vercel.app  
+**⚙️ Backend API:** https://trading-copilot-api-okr7.onrender.com/docs  
+**💻 GitHub:** https://github.com/khanzadigithubid/Trading-Copilot
 
 ---
 
@@ -19,7 +19,7 @@ Every trading app shows you **WHAT**.
 
 → *"RSI at 34.2 suggests oversold conditions. MACD is crossing above its signal line indicating bullish momentum. Price action over last 20 candles moved down 2.1% — a reversal setup is forming."*
 
-Bloomberg Terminal charges $24,000/year for this level of insight.
+Bloomberg Terminal charges $24,000/year for this level of insight.  
 **This is free.**
 
 ---
@@ -32,17 +32,20 @@ Bloomberg Terminal charges $24,000/year for this level of insight.
 | 📈 **TradingView Charts** | Professional candlestick charts with volume, signal markers, 4 timeframe tabs |
 | 🕐 **Multi-Timeframe Analysis** | 1D + 1W + 1M signals combined into one weighted verdict |
 | 🌡️ **Sentiment Heatmap** | Market mood across all 27 assets from news + price action |
-| 👥 **Community Signals** | Share trade ideas, vote on others analysis, see collective consensus |
+| 👥 **Community Signals** | Share trade ideas, vote on others' analysis, see collective consensus |
 | 📚 **AI Trade Journal** | Every closed trade gets automatic AI coaching — what you did right, what to improve |
 | 📊 **Portfolio Analytics** | Equity curve, Sharpe ratio, profit factor, max drawdown, win/loss streaks |
 | 🔔 **Price Alerts** | Set price-above or price-below alerts — auto-checked against live prices |
 | ⚡ **5 Backtest Strategies** | RSI+MACD, Bollinger Bands, EMA Crossover, SuperTrend, Mean Reversion |
 | 💬 **Market Chat (AI)** | Ask anything in plain language — AI answers using live market data |
 | 📐 **Risk Manager** | Position sizing calculator based on your capital and risk tolerance |
-| � **News Feed** | Real-time market news filtered by asset (powered by NewsAPI) |
+| 📰 **News Feed** | Real-time market news filtered by asset (powered by NewsAPI) |
 | 🏆 **Leaderboard** | Top traders ranked by signals, votes, and paper trading performance |
 | 📱 **PWA — Install on Phone** | Add to home screen, works offline, no app store needed |
 | 🔐 **Admin Dashboard** | Real-time user stats, activity metrics, top assets (admin only) |
+| 📬 **Contact Form** | Web3Forms powered — no backend required, free, reliable email delivery |
+| 👤 **User Avatar in Navbar** | Professional dashboard navbar shows user initial + username |
+| 📞 **Phone Field with Country Code** | Contact form includes country flag + dial code selector (20 countries) |
 
 ---
 
@@ -93,6 +96,7 @@ Bloomberg Terminal charges $24,000/year for this level of insight.
 - **TradingView Lightweight Charts v5** — Professional candlestick charts
 - **Recharts** — Portfolio equity curve charts
 - **NextAuth.js** — JWT authentication
+- **Web3Forms** — Contact form email (free, no backend needed)
 - **Vercel Analytics** — Page views, visitors, countries
 
 ### Backend
@@ -111,9 +115,9 @@ Bloomberg Terminal charges $24,000/year for this level of insight.
 - **NewsAPI** — Real market news headlines
 
 ### Deployment
-- **Vercel** — Frontend (free)
-- **Render** — Backend (free)
-- **Neon** — PostgreSQL database (free)
+- **Vercel** — Frontend (free tier)
+- **Render** — Backend (free tier)
+- **Neon** — PostgreSQL database (free tier)
 
 ---
 
@@ -204,9 +208,9 @@ App: http://localhost:3000
 1. Go to https://render.com → New Web Service
 2. Connect `Trading-Copilot` GitHub repo
 3. Root Directory: `backend`
-4. Build: `pip install -r requirements.txt`
-5. Start: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-6. Add all environment variables
+4. Build Command: `pip install -r requirements.txt`
+5. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+6. Add environment variables (see `.env.example`)
 7. Deploy!
 
 ### Frontend → Vercel (Free)
@@ -214,9 +218,11 @@ App: http://localhost:3000
 2. Root Directory: `frontend`
 3. Add environment variables:
    - `NEXTAUTH_URL` = your Vercel URL
-   - `NEXTAUTH_SECRET` = random string
-   - `NEXT_PUBLIC_API_URL` = your Render URL
+   - `NEXTAUTH_SECRET` = random 32-char string
+   - `NEXT_PUBLIC_API_URL` = your Render backend URL
 4. Deploy!
+
+> **Contact Form:** Uses [Web3Forms](https://web3forms.com) — no additional env vars needed for contact form. Access key is embedded in frontend code.
 
 ---
 
@@ -228,28 +234,52 @@ Trading-Copilot/
 ├── backend/                        # FastAPI Python backend
 │   ├── app/
 │   │   ├── core/                   # Config, database, security
+│   │   │   ├── config.py           # All environment settings
+│   │   │   ├── database.py         # SQLAlchemy engine + session
+│   │   │   └── security.py         # JWT creation + verification
 │   │   ├── models/                 # Database tables (SQLAlchemy)
-│   │   ├── routers/                # API endpoints (15 routers)
+│   │   │   ├── user.py             # User accounts
+│   │   │   ├── trade.py            # Paper trades
+│   │   │   ├── alert.py            # Price alerts
+│   │   │   ├── signal.py           # Cached AI signals
+│   │   │   ├── asset.py            # 27 market assets
+│   │   │   ├── community_signal.py # Community trade ideas
+│   │   │   └── sentiment_log.py    # Sentiment history
+│   │   ├── routers/                # API endpoint handlers (20+ routers)
 │   │   ├── schemas/                # Pydantic request/response shapes
 │   │   └── services/
 │   │       ├── market_data/        # Price providers (KuCoin, Polygon, etc.)
 │   │       ├── claude_client.py    # AI provider (OpenRouter + Claude)
-│   │       ├── signal_engine.py    # AI signal generation + caching
 │   │       ├── backtest_engine.py  # 5 backtest strategies
 │   │       ├── chat_service.py     # Market chat AI
 │   │       ├── paper_trading.py    # Virtual trade management
 │   │       └── risk_manager.py     # Position sizing + risk metrics
-│   └── Dockerfile
+│   ├── .env.example                # Environment variables template
+│   └── requirements.txt
 │
-├── frontend/                       # Next.js frontend
+├── frontend/                       # Next.js 14 frontend
 │   ├── src/
 │   │   ├── app/                    # 19 pages (Next.js App Router)
+│   │   │   ├── dashboard/          # Main trading dashboard
+│   │   │   ├── markets/            # 5 market category pages
+│   │   │   ├── contact/            # Contact form (Web3Forms)
+│   │   │   ├── learn/              # Trading education
+│   │   │   ├── news/               # Market news feed
+│   │   │   └── leaderboard/        # Top traders
 │   │   ├── components/             # 15+ React components
-│   │   ├── hooks/                  # usePriceWebSocket
-│   │   ├── lib/                    # API call functions
+│   │   │   ├── AssetDashboard      # 27 assets table
+│   │   │   ├── SignalPanel         # AI signal display
+│   │   │   ├── CandlestickChart    # TradingView chart
+│   │   │   ├── PaperTradingPanel   # Virtual trading
+│   │   │   ├── PortfolioPanel      # Analytics + equity curve
+│   │   │   ├── BacktestPanel       # Strategy backtester
+│   │   │   ├── ChatPanel           # AI market chat
+│   │   │   └── ...more
+│   │   ├── lib/                    # API call functions + auth config
 │   │   └── types/                  # TypeScript type definitions
 │   └── public/                     # PWA icons, manifest, service worker
 │
+├── docker-compose.yml              # Local Docker setup
 └── README.md
 ```
 
@@ -261,7 +291,9 @@ Trading-Copilot/
 |---|---|---|
 | GET | `/health` | Health check |
 | POST | `/auth/register` | Create account |
-| POST | `/auth/login` | Login |
+| POST | `/auth/login` | Login + get JWT token |
+| GET | `/auth/me` | Get current user info |
+| POST | `/auth/refresh` | Refresh JWT token |
 | GET | `/assets` | List all 27 assets |
 | GET | `/assets/{symbol}/price` | Live price |
 | GET | `/assets/{symbol}/history` | OHLCV chart data |
@@ -270,17 +302,18 @@ Trading-Copilot/
 | POST | `/backtest/run` | Run backtest strategy |
 | POST | `/chat/query` | Market chat AI |
 | GET | `/portfolio/stats` | Portfolio analytics |
-| GET | `/journal` | AI trade journal |
-| GET | `/sentiment` | Sentiment heatmap |
+| GET | `/journal` | AI trade journal entries |
+| GET | `/sentiment` | Sentiment heatmap data |
 | GET | `/news` | News feed |
-| GET | `/leaderboard` | Top traders |
+| GET | `/leaderboard` | Top traders ranking |
 | GET | `/community/feed` | Community signals |
-| POST | `/community/{id}/vote` | Vote on signal |
-| GET | `/alerts` | Price alerts |
-| GET | `/admin/stats` | Admin analytics |
-| WS | `/ws/prices` | Live WebSocket prices |
+| POST | `/community/{id}/vote` | Vote on a signal |
+| GET | `/alerts` | Price alerts list |
+| POST | `/contact` | Contact form (logs only) |
+| GET | `/admin/stats` | Admin analytics (protected) |
+| WS | `/ws/prices` | Live WebSocket price stream |
 
-Full docs: https://trading-copilot-api-okr7.onrender.com/docs
+Full interactive docs: https://trading-copilot-api-okr7.onrender.com/docs
 
 ---
 
@@ -305,12 +338,24 @@ Get free key: https://openrouter.ai/keys
 ## 📊 Market Data Provider Priority
 
 ```
-Crypto:  Binance → KuCoin → CoinGecko → Mock
-Forex:   TwelveData → Mock
-Stocks:  Polygon.io → Mock
+Crypto:  KuCoin → CoinGecko → Mock
+Forex:   TwelveData → ExchangeRate → Mock
+Stocks:  Polygon.io → Yahoo Finance → Mock
 ```
 
-No API key needed for KuCoin (crypto fallback).
+No API key needed for KuCoin (crypto) — works out of the box.
+
+---
+
+## 📬 Contact Form
+
+The contact form uses **[Web3Forms](https://web3forms.com)** — a free, reliable email service that works directly from the browser with no backend required.
+
+- ✅ Free — 250 submissions/month
+- ✅ No backend SMTP setup needed
+- ✅ Spam protection built-in (honeypot)
+- ✅ Phone field with country flag + dial code (20 countries)
+- ✅ Emails delivered to `memonbisma22@gmail.com`
 
 ---
 
@@ -334,10 +379,10 @@ MIT License — free to use, modify, and distribute.
 
 ## 👩‍💻 Built By
 
-**Khanzadi** — Full Stack Developer
-- 🌐 Live App: https://kw-trading-copilot.vercel.app
-- 💻 GitHub: https://github.com/khanzadigithubid
-- 🔗 LinkedIn: Coming soon
+**Khanzadi** — Full Stack Developer  
+- 🌐 Live App: https://kw-trading-copilot.vercel.app  
+- 💻 GitHub: https://github.com/khanzadigithubid  
+- 📬 Contact: memonbisma22@gmail.com
 
 ---
 
