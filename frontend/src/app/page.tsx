@@ -137,33 +137,22 @@ export default function HomePage() {
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
 
       {/* ── NAVBAR ── */}
-      <nav className="fixed top-0 z-50 w-full border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6 py-3.5">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-black text-xs tracking-tight">AI</div>
-            <span className="font-bold text-slate-100 text-sm sm:text-base tracking-tight">Trading Copilot</span>
+      <nav className="fixed top-0 z-50 w-full border-b border-slate-800/60 bg-slate-900/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6 py-3">
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">AI</div>
+            <span className="font-semibold text-slate-100 text-sm sm:text-base">Trading Copilot</span>
           </Link>
-          <div className="hidden md:flex items-center gap-1">
-            {[
-              { href: "/markets", label: "Markets" },
-              { href: "/learn", label: "Learn" },
-              { href: "/news", label: "News" },
-              { href: "/leaderboard", label: "Leaderboard" },
-              { href: "/about", label: "About" },
-            ].map((l) => (
-              <Link key={l.href} href={l.href}
-                className="px-3 py-1.5 text-sm text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 rounded-lg transition">
-                {l.label}
-              </Link>
-            ))}
+          <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
+            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
+            <Link href="/news" className="hover:text-slate-100 transition">News</Link>
+            <Link href="/leaderboard" className="hover:text-slate-100 transition">Leaderboard</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/login"
-              className="hidden md:block px-4 py-1.5 text-sm text-slate-300 hover:text-slate-100 border border-slate-700 hover:border-slate-600 rounded-lg transition">
-              Sign in
-            </Link>
-            <Link href="/register"
-              className="px-4 py-1.5 text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg transition shadow-lg shadow-emerald-500/20">
+            <Link href="/login" className="hidden md:block text-sm text-slate-400 hover:text-slate-100 transition">Sign in</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
               Get started
             </Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
