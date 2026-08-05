@@ -199,7 +199,7 @@ export default function DashboardPage() {
                 }`}
               >
                 <span className="text-sm">{tab.icon}</span>
-                <span className="hidden xs:inline sm:inline">{tab.label}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
             ))}
           </div>

@@ -112,8 +112,8 @@ export default function BacktestPanel({ accessToken, selectedSymbol }: BacktestP
             </div>
           </div>
           {result.trades.length > 0 && (
-            <div className="max-h-48 overflow-y-auto rounded-lg border border-slate-800">
-              <table className="min-w-full text-left text-xs">
+            <div className="overflow-x-auto max-h-48 overflow-y-auto rounded-lg border border-slate-800">
+              <table className="min-w-full text-left text-xs whitespace-nowrap">
                 <thead className="border-b border-slate-800 text-slate-500">
                   <tr>
                     <th className="px-3 py-2">Type</th>

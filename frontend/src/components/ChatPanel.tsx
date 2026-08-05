@@ -58,7 +58,7 @@ export default function ChatPanel({ accessToken, selectedSymbol }: ChatPanelProp
   }
 
   return (
-    <section className="flex h-[520px] flex-col rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+    <section className="flex min-h-[400px] h-[520px] max-h-[70vh] flex-col rounded-2xl border border-slate-800 bg-slate-900/40 p-4 sm:p-6">
       <div>
         <h2 className="text-lg font-semibold">Market Chat</h2>
         <p className="mt-1 text-sm text-slate-400">

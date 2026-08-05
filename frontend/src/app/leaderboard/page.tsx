@@ -164,27 +164,20 @@ export default function LeaderboardPage() {
                   <p className="text-xs text-slate-500">Joined {new Date(entry.joined).toLocaleDateString()}</p>
                 </div>
 
-                {/* Stats */}
-                <div className="hidden md:flex items-center gap-6 text-sm text-right">
-                  <div>
-                    <p className="text-xs text-slate-500">Signals</p>
-                    <p className="font-semibold text-slate-200">{entry.total_signals}</p>
+                {/* Stats — desktop full, mobile compact */}
+                <div className="flex items-center gap-3 text-sm text-right">
+                  {/* Mobile: show only active tab's stat */}
+                  <div className="flex md:hidden flex-col items-end">
+                    {tab === "signals" && <><p className="text-xs text-slate-500">Signals</p><p className="font-semibold text-slate-200">{entry.total_signals}</p></>}
+                    {tab === "votes" && <><p className="text-xs text-slate-500">Votes</p><p className="font-semibold text-emerald-400">▲ {entry.total_upvotes}</p></>}
+                    {tab === "pnl" && <><p className="text-xs text-slate-500">P&L</p><p className={`font-semibold font-mono ${entry.total_pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>{entry.total_pnl >= 0 ? "+" : ""}${entry.total_pnl.toFixed(0)}</p></>}
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Votes</p>
-                    <p className="font-semibold text-emerald-400">▲ {entry.total_upvotes}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Paper P&L</p>
-                    <p className={`font-semibold font-mono ${entry.total_pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {entry.total_pnl >= 0 ? "+" : ""}${entry.total_pnl.toFixed(0)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Win Rate</p>
-                    <p className={`font-semibold ${entry.win_rate >= 50 ? "text-emerald-400" : "text-slate-300"}`}>
-                      {entry.win_rate.toFixed(0)}%
-                    </p>
+                  {/* Desktop: show all stats */}
+                  <div className="hidden md:flex items-center gap-6">
+                    <div><p className="text-xs text-slate-500">Signals</p><p className="font-semibold text-slate-200">{entry.total_signals}</p></div>
+                    <div><p className="text-xs text-slate-500">Votes</p><p className="font-semibold text-emerald-400">▲ {entry.total_upvotes}</p></div>
+                    <div><p className="text-xs text-slate-500">Paper P&L</p><p className={`font-semibold font-mono ${entry.total_pnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>{entry.total_pnl >= 0 ? "+" : ""}${entry.total_pnl.toFixed(0)}</p></div>
+                    <div><p className="text-xs text-slate-500">Win Rate</p><p className={`font-semibold ${entry.win_rate >= 50 ? "text-emerald-400" : "text-slate-300"}`}>{entry.win_rate.toFixed(0)}%</p></div>
                   </div>
                 </div>
               </div>

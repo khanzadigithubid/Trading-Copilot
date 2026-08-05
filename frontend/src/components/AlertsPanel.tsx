@@ -93,18 +93,18 @@ export default function AlertsPanel({ accessToken, selectedSymbol }: AlertsPanel
       </div>
 
       {/* Create alert form */}
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className="mt-5 grid grid-cols-1 sm:flex sm:flex-wrap gap-2">
         <input
           type="text"
           placeholder="Symbol (e.g. BTCUSDT)"
           value={symbol}
           onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-          className="w-36 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm uppercase outline-none focus:border-emerald-500"
+          className="w-full sm:w-36 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm uppercase outline-none focus:border-emerald-500"
         />
         <select
           value={condition}
           onChange={(e) => setCondition(e.target.value as AlertCondition)}
-          className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+          className="w-full sm:w-auto rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
         >
           <option value="above">Price above</option>
           <option value="below">Price below</option>
@@ -115,12 +115,12 @@ export default function AlertsPanel({ accessToken, selectedSymbol }: AlertsPanel
           placeholder="Target price"
           value={targetPrice}
           onChange={(e) => setTargetPrice(e.target.value)}
-          className="w-36 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-emerald-500"
+          className="w-full sm:w-36 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-emerald-500"
         />
         <button
           onClick={handleCreate}
           disabled={!symbol || !targetPrice}
-          className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50"
+          className="w-full sm:w-auto rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50"
         >
           + Add Alert
         </button>

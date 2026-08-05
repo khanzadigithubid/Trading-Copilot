@@ -127,7 +127,7 @@ export default function ChatWidget() {
     <>
       {open && (
         <div
-          className="fixed bottom-20 right-4 z-40 w-80 sm:w-96 rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
+          className="fixed bottom-20 right-2 sm:right-4 z-40 w-[calc(100vw-16px)] sm:w-80 md:w-96 rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
           style={{ maxHeight: "75vh" }}
         >
           {/* Header */}
