@@ -98,39 +98,39 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Center — selected asset pill (desktop only) */}
-          <div className="hidden md:flex flex-1 justify-center">
+          {/* Center — selected asset pill */}
+          <div className="flex flex-1 justify-center">
             {selectedSymbol && (
-              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400 font-medium">
-                {selectedSymbol} selected
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 sm:px-3 py-1 text-[10px] sm:text-xs text-emerald-400 font-medium">
+                {selectedSymbol}
               </span>
             )}
           </div>
 
           {/* Right — User avatar + name + signout */}
-          <div className="flex items-center gap-3">
-            {/* Avatar + name (desktop) */}
-            <div className="hidden md:flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-slate-950 font-bold text-sm select-none">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Avatar + name */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
+              <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-500 text-slate-950 font-bold text-xs sm:text-sm select-none">
                 {(session.user.email || "U")[0].toUpperCase()}
               </div>
-              <span className="text-sm font-semibold text-slate-100">
+              <span className="text-xs sm:text-sm font-semibold text-slate-100">
                 {session.user.email?.split("@")[0]}
               </span>
             </div>
 
             {/* Divider */}
-            <div className="hidden md:block h-5 w-px bg-slate-700" />
+            <div className="h-4 sm:h-5 w-px bg-slate-700" />
 
             {/* Sign out */}
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition"
+              className="flex items-center gap-1 sm:gap-1.5 rounded-lg border border-slate-700 px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
               </svg>
-              <span className="hidden sm:inline">Sign out</span>
+              <span>Sign out</span>
             </button>
           </div>
 
@@ -141,15 +141,6 @@ export default function DashboardPage() {
       <div className="border-b border-slate-800 bg-slate-900/40">
         <div className="mx-auto max-w-7xl px-2 sm:px-6">
           <div className="flex gap-0 overflow-x-auto scrollbar-hide">
-            {/* Mobile: show user name */}
-            <div className="flex md:hidden min-w-fit items-center gap-2 border-r border-slate-800 px-3 py-3">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-xs select-none">
-                {(session.user.email || "U")[0].toUpperCase()}
-              </div>
-              <span className="text-xs font-medium text-slate-200">
-                {session.user.email?.split("@")[0]}
-              </span>
-            </div>
             {[
               {
                 label: "Capital",
@@ -199,7 +190,7 @@ export default function DashboardPage() {
                 }`}
               >
                 <span className="text-sm">{tab.icon}</span>
-                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="text-[10px] sm:text-sm">{tab.label}</span>
               </button>
             ))}
           </div>
