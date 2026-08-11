@@ -137,24 +137,43 @@ def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db
     return MessageResponse(message="If that email exists, a reset link has been sent.")
 
 
+@router.get("/verify-reset-token/{token}")
+def verify_reset_token(token: str, db: Session = Depends(get_db)):
+    """Check if a reset token is valid — for debugging."""
+    clean = token.strip()
+    user = db.query(User).filter(User.reset_token == clean).first()
+    if not user:
+        return {"valid": False, "reason": "token not found", "token_len": len(clean)}
+    now = datetime.now(timezone.utc)
+    expiry = user.reset_token_expiry
+    if expiry and expiry.tzinfo is None:
+        expiry = expiry.replace(tzinfo=timezone.utc)
+    expired = now > expiry if expiry else True
+    return {
+        "valid": not expired,
+        "email": user.email,
+        "expired": expired,
+        "expiry": str(expiry),
+        "token_len": len(clean),
+    }
+
+
 @router.post("/reset-password", response_model=MessageResponse)
 def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db)):
     """Verify token and set new password."""
-    logger.info(f"[RESET] Token received (len={len(payload.token)}): {payload.token[:20]}...")
-
-    # Strip whitespace just in case
     clean_token = payload.token.strip()
+    logger.info(f"[RESET] Token received len={len(clean_token)} prefix={clean_token[:16]}")
+
     user = db.query(User).filter(User.reset_token == clean_token).first()
 
     if not user or user.reset_token_expiry is None:
-        # Log all tokens in DB for debugging
-        all_users = db.query(User).filter(User.reset_token.isnot(None)).all()
-        logger.warning(f"[RESET] Token not found. DB has {len(all_users)} pending resets.")
-        for u in all_users:
-            logger.warning(f"[RESET]   user={u.email} token_prefix={str(u.reset_token)[:20] if u.reset_token else 'None'}")
+        # Log pending tokens for debug
+        pending = db.query(User).filter(User.reset_token.isnot(None)).all()
+        for u in pending:
+            db_tok = str(u.reset_token or "")
+            logger.warning(f"[RESET] DB token len={len(db_tok)} prefix={db_tok[:16]} match={db_tok==clean_token}")
         raise HTTPException(status_code=400, detail="Invalid or expired reset token.")
 
-    # Check expiry
     now = datetime.now(timezone.utc)
     expiry = user.reset_token_expiry
     if expiry.tzinfo is None:
@@ -163,7 +182,6 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
     if now > expiry:
         raise HTTPException(status_code=400, detail="Reset token has expired. Please request a new one.")
 
-    # Set new password and clear token
     user.password_hash = get_password_hash(payload.new_password)
     user.reset_token = None
     user.reset_token_expiry = None
