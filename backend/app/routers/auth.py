@@ -71,8 +71,8 @@ def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db
     if not user:
         return MessageResponse(message="If that email exists, a reset link has been sent.")
 
-    # Generate secure token
-    token = secrets.token_urlsafe(32)
+    # Generate secure token — hex only, no special chars for email safety
+    token = secrets.token_hex(32)
     user.reset_token = token
     user.reset_token_expiry = datetime.now(timezone.utc) + timedelta(hours=1)
     db.commit()
@@ -140,9 +140,18 @@ def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db
 @router.post("/reset-password", response_model=MessageResponse)
 def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db)):
     """Verify token and set new password."""
-    user = db.query(User).filter(User.reset_token == payload.token).first()
+    logger.info(f"[RESET] Token received (len={len(payload.token)}): {payload.token[:20]}...")
+
+    # Strip whitespace just in case
+    clean_token = payload.token.strip()
+    user = db.query(User).filter(User.reset_token == clean_token).first()
 
     if not user or user.reset_token_expiry is None:
+        # Log all tokens in DB for debugging
+        all_users = db.query(User).filter(User.reset_token.isnot(None)).all()
+        logger.warning(f"[RESET] Token not found. DB has {len(all_users)} pending resets.")
+        for u in all_users:
+            logger.warning(f"[RESET]   user={u.email} token_prefix={str(u.reset_token)[:20] if u.reset_token else 'None'}")
         raise HTTPException(status_code=400, detail="Invalid or expired reset token.")
 
     # Check expiry
@@ -160,4 +169,5 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
     user.reset_token_expiry = None
     db.commit()
 
+    logger.info(f"[RESET] Password reset successful for {user.email}")
     return MessageResponse(message="Password reset successfully. You can now log in.")
