@@ -94,7 +94,19 @@ def health():
     return {"status": "ok", "service": settings.app_name}
 
 
-@app.get("/debug/env")
+@app.get("/debug/reset-check")
+def debug_reset_check():
+    """Check if reset_token column exists in DB."""
+    try:
+        with engine.connect() as conn:
+            from sqlalchemy import text
+            result = conn.execute(text(
+                "SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name IN ('reset_token','reset_token_expiry')"
+            ))
+            cols = [row[0] for row in result]
+            return {"columns_found": cols, "migration_ok": len(cols) == 2}
+    except Exception as e:
+        return {"error": str(e)}
 def debug_env():
     """Temporary - check if API keys are loaded on Render."""
     return {
