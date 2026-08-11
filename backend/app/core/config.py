@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     gmail_user: str = ""
     gmail_pass: str = ""
 
+    # Web3Forms (for password reset emails)
+    web3forms_key: str = "dbda848b-a2a9-4954-88c7-5e5362feae49"
+    frontend_url: str = "https://kw-trading-copilot.vercel.app"
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]

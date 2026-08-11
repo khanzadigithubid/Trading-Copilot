@@ -18,6 +18,10 @@ class User(Base):
     capital: Mapped[float] = mapped_column(Float, default=0.0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+    # Password reset
+    reset_token: Mapped[str | None] = mapped_column(String, nullable=True, default=None)
+    reset_token_expiry: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, default=None)
+
     trades = relationship("Trade", back_populates="user")
     alerts = relationship("PriceAlert", back_populates="user")
     community_signals = relationship("CommunitySignal", back_populates="user")
