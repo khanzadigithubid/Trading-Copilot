@@ -29,6 +29,22 @@ from app.services.seed import seed_assets
 async def lifespan(app: FastAPI):
     # Startup
     Base.metadata.create_all(bind=engine)
+
+    # Safe migration — add reset token columns if not exist
+    try:
+        with engine.connect() as conn:
+            from sqlalchemy import text
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR"
+            ))
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP WITH TIME ZONE"
+            ))
+            conn.commit()
+    except Exception as e:
+        import logging
+        logging.warning(f"[MIGRATION] Column add skipped (may already exist): {e}")
+
     db = SessionLocal()
     try:
         seed_assets(db)
