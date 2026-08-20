@@ -24,7 +24,14 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       error: undefined,
     };
   } catch {
-    return { ...token, error: "RefreshFailed" };
+    // Refresh failed (server sleeping) — keep old token, don't logout
+    // Just reset the issuedAt so we try again later
+    console.log("Token refresh failed — keeping existing token");
+    return {
+      ...token,
+      issuedAt: Date.now() - (5 * 24 * 60 * 60 * 1000), // retry in 1 day
+      error: undefined, // don't set error — don't logout
+    };
   }
 }
 
@@ -67,7 +74,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: 60 * 60 * 24 * 30, // 30 days — stay logged in longer
   },
   pages: {
     signIn: "/login",
