@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import MobileNav from "@/components/MobileNav";
+import LiveSignalPreview from "@/components/LiveSignalPreview";
 
 const NAV_LINKS = [
   { href: "/markets", label: "Markets", icon: "🌍" },
@@ -233,93 +234,7 @@ export default function HomePage() {
       </section>
 
       {/* ── LIVE SIGNAL PREVIEW ── */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-400 mb-3">Live preview</p>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight">See what an AI signal looks like</h2>
-            <p className="mt-3 text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
-              Every signal comes with reasoning you can actually understand and act on.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {/* Signal card */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 hover:border-emerald-500/30 transition">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-0.5">AI Signal</p>
-                  <p className="text-xl font-bold">BTCUSDT</p>
-                </div>
-                <span className="rounded-xl border border-emerald-500/30 bg-emerald-500/15 px-4 py-1.5 text-sm font-black text-emerald-400">
-                  BUY
-                </span>
-              </div>
-              <div className="flex gap-6 text-sm mb-4">
-                <div>
-                  <p className="text-slate-600 text-xs mb-0.5">Confidence</p>
-                  <p className="font-bold text-slate-200">78%</p>
-                </div>
-                <div>
-                  <p className="text-slate-600 text-xs mb-0.5">Risk Level</p>
-                  <p className="font-bold text-amber-400">Medium</p>
-                </div>
-                <div>
-                  <p className="text-slate-600 text-xs mb-0.5">Timeframe</p>
-                  <p className="font-bold text-slate-200">1D</p>
-                </div>
-              </div>
-              <div className="h-1.5 w-full rounded-full bg-slate-800 mb-4">
-                <div className="h-1.5 w-[78%] rounded-full bg-gradient-to-r from-emerald-600 to-emerald-400" />
-              </div>
-              <div className="rounded-xl bg-slate-950/60 border border-slate-800/60 p-4">
-                <p className="text-xs text-slate-500 mb-1.5 uppercase tracking-wide font-semibold">AI Reasoning</p>
-                <p className="text-sm leading-relaxed text-slate-300">
-                  &ldquo;RSI at 34.2 suggests oversold conditions. MACD crossing above signal line — bullish momentum building. Price action down 2.1% over 20 candles. Reversal setup forming.&rdquo;
-                </p>
-              </div>
-            </div>
-
-            {/* Journal card */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 hover:border-violet-500/30 transition">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-0.5">AI Trade Journal</p>
-                  <p className="text-xl font-bold">BTCUSDT LONG</p>
-                </div>
-                <span className="rounded-xl border border-emerald-500/30 bg-emerald-500/15 px-3 py-1.5 text-xs font-black text-emerald-400">
-                  EXCELLENT
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-4 text-sm mb-4">
-                <div>
-                  <p className="text-slate-600 text-xs mb-0.5">Entry</p>
-                  <p className="font-mono font-bold text-slate-200">$67,200</p>
-                </div>
-                <div>
-                  <p className="text-slate-600 text-xs mb-0.5">Exit</p>
-                  <p className="font-mono font-bold text-slate-200">$68,750</p>
-                </div>
-                <div>
-                  <p className="text-slate-600 text-xs mb-0.5">P&amp;L</p>
-                  <p className="font-mono font-bold text-emerald-400">+$155 (+2.3%)</p>
-                </div>
-              </div>
-              <div className="rounded-xl bg-slate-950/60 border border-slate-800/60 p-4 mb-3">
-                <p className="text-xs text-slate-500 mb-1.5 uppercase tracking-wide font-semibold">AI Feedback</p>
-                <p className="text-sm leading-relaxed text-slate-300">
-                  &ldquo;Entry timing was strong — RSI oversold at 32. You held through the dip. Exit was near-optimal, capturing 87% of the move.&rdquo;
-                </p>
-              </div>
-              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
-                <p className="text-xs font-bold text-amber-400 mb-0.5">💡 Key lesson</p>
-                <p className="text-xs text-slate-400">Consider a trailing stop next time to capture the remaining 13% upside.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <LiveSignalPreview />
 
       {/* ── MARKETS ── */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 border-y border-slate-800/60 bg-slate-900/20">
