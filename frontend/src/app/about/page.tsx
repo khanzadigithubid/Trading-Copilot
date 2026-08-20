@@ -44,20 +44,20 @@ export default function AboutPage() {
             <span className="font-semibold">Trading Copilot</span>
           </Link>
           <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
-            <Link href="/markets" className="hover:text-slate-100">Markets</Link>
-            <Link href="/learn" className="hover:text-slate-100">Learn</Link>
-            <Link href="/news" className="hover:text-slate-100">News</Link>
-            <Link href="/about" className="hover:text-slate-100">About</Link>
+            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
+            <Link href="/news" className="hover:text-slate-100 transition">News</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Get started</Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-20 text-center">
+      <section className="px-4 sm:px-6 py-8 sm:py-16 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 font-black text-2xl">AI</div>
         <h1 className="mt-6 text-4xl font-bold sm:text-5xl">About AI Trading Copilot</h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-400">
@@ -67,7 +67,7 @@ export default function AboutPage() {
       </section>
 
       {/* Mission */}
-      <section className="border-y border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
+      <section className="border-y border-slate-800 bg-slate-900/30 px-4 sm:px-6 py-8 sm:py-14">
         <div className="mx-auto max-w-4xl">
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -95,7 +95,7 @@ export default function AboutPage() {
       </section>
 
       {/* What makes us different */}
-      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
+      <section className="px-4 sm:px-6 py-8 sm:py-14">
         <div className="mx-auto max-w-5xl">
           <p className="text-center text-xs uppercase tracking-widest text-emerald-400">What Makes Us Different</p>
           <h2 className="mt-3 text-center text-3xl font-bold">Features that exist nowhere else</h2>
@@ -112,7 +112,7 @@ export default function AboutPage() {
       </section>
 
       {/* Tech stack */}
-      <section className="border-y border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
+      <section className="border-y border-slate-800 bg-slate-900/30 px-4 sm:px-6 py-8 sm:py-14">
         <div className="mx-auto max-w-4xl">
           <p className="text-center text-xs uppercase tracking-widest text-emerald-400">Built With</p>
           <h2 className="mt-3 text-center text-3xl font-bold">Modern open-source tech stack</h2>
@@ -130,7 +130,7 @@ export default function AboutPage() {
       </section>
 
       {/* Markets */}
-      <section className="px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16 text-center">
+      <section className="px-4 sm:px-6 py-8 sm:py-14 text-center">
         <p className="text-xs uppercase tracking-widest text-emerald-400">Coverage</p>
         <h2 className="mt-3 text-3xl font-bold">27 Markets. 5 Asset Classes.</h2>
         <p className="mt-4 text-slate-400">Forex · Crypto · Stocks · Commodities · Indices</p>
@@ -156,7 +156,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-800 px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-600">
+      <footer className="border-t border-slate-800 px-4 sm:px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-600">
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Link href="/" className="hover:text-slate-400">Home</Link>
           <Link href="/markets" className="hover:text-slate-400">Markets</Link>

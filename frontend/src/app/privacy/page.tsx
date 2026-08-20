@@ -26,19 +26,19 @@ export default function PrivacyPage() {
             <span className="font-semibold">Trading Copilot</span>
           </Link>
           <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
-            <Link href="/markets" className="hover:text-slate-100">Markets</Link>
-            <Link href="/learn" className="hover:text-slate-100">Learn</Link>
-            <Link href="/news" className="hover:text-slate-100">News</Link>
-            <Link href="/about" className="hover:text-slate-100">About</Link>
+            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
+            <Link href="/news" className="hover:text-slate-100 transition">News</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Get started</Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>
       </nav>
 
-      <div className="mx-auto max-w-3xl px-4 sm:px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 sm:py-16">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8 sm:py-14">
         <h1 className="text-4xl font-bold">Privacy Policy</h1>
         <p className="mt-2 text-sm text-slate-500">Last updated: {new Date().toLocaleDateString()}</p>
 
@@ -137,7 +137,7 @@ export default function PrivacyPage() {
         </div>
       </div>
 
-      <footer className="border-t border-slate-800 px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-600">
+      <footer className="border-t border-slate-800 px-4 sm:px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-600">
         <div className="flex flex-wrap items-center justify-center gap-4 mb-3">
           <Link href="/" className="hover:text-slate-400">Home</Link>
           <Link href="/terms" className="hover:text-slate-400">Terms</Link>

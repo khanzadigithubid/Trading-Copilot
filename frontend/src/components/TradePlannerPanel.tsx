@@ -80,13 +80,13 @@ export default function TradePlannerPanel({ accessToken, selectedSymbol }: Trade
             value={symbol}
             onChange={(e) => setSymbol(e.target.value.toUpperCase())}
             placeholder="e.g. BTCUSDT"
-            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-emerald-500 uppercase"
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none transition focus:border-emerald-500 uppercase"
           />
         </div>
         <div>
           <label className="text-xs text-slate-500 mb-1 block">Direction</label>
           <select value={direction} onChange={(e) => setDirection(e.target.value)}
-            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm">
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm">
             <option value="auto">Auto (AI decides)</option>
             <option value="BUY">BUY (Long)</option>
             <option value="SELL">SELL (Short)</option>
@@ -95,12 +95,12 @@ export default function TradePlannerPanel({ accessToken, selectedSymbol }: Trade
         <div>
           <label className="text-xs text-slate-500 mb-1 block">Capital ($)</label>
           <input type="number" value={capital} onChange={(e) => setCapital(e.target.value)} min="10"
-            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-emerald-500" />
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none transition focus:border-emerald-500" />
         </div>
         <div>
           <label className="text-xs text-slate-500 mb-1 block">Risk per trade (%)</label>
           <input type="number" value={risk} onChange={(e) => setRisk(e.target.value)} min="0.5" max="10" step="0.5"
-            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-emerald-500" />
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none transition focus:border-emerald-500" />
         </div>
       </div>
 

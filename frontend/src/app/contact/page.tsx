@@ -113,12 +113,12 @@ export default function ContactPage() {
             <span className="font-semibold text-sm sm:text-base">Trading Copilot</span>
           </Link>
           <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
-            <Link href="/markets" className="hover:text-slate-100">Markets</Link>
-            <Link href="/learn" className="hover:text-slate-100">Learn</Link>
-            <Link href="/about" className="hover:text-slate-100">About</Link>
+            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Get started</Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>
@@ -184,13 +184,13 @@ export default function ContactPage() {
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Name</label>
                     <input required type="text" name="name" placeholder="Your name"
-                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500" />
+                      className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition focus:border-emerald-500" />
                   </div>
 
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Email</label>
                     <input required type="email" name="email" placeholder="you@example.com"
-                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500" />
+                      className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition focus:border-emerald-500" />
                   </div>
 
                   <div>
@@ -213,7 +213,7 @@ export default function ContactPage() {
                         type="tel"
                         name="phone"
                         placeholder="3001234567"
-                        className="flex-1 rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500"
+                        className="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition focus:border-emerald-500"
                       />
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function ContactPage() {
                   <div>
                     <label className="mb-1 block text-sm text-slate-400">Subject</label>
                     <select name="subject"
-                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500">
+                      className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition focus:border-emerald-500">
                       <option>General question</option>
                       <option>Bug report</option>
                       <option>Feature request</option>
@@ -234,7 +234,7 @@ export default function ContactPage() {
                     <label className="mb-1 block text-sm text-slate-400">Message</label>
                     <textarea required name="message" rows={4} placeholder="Tell us what's on your mind..."
                       minLength={10}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none focus:border-emerald-500 resize-none" />
+                      className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 resize-none" />
                     <p className="mt-1 text-xs text-slate-600">Minimum 10 characters</p>
                   </div>
 
@@ -245,7 +245,7 @@ export default function ContactPage() {
                   )}
 
                   <button type="submit" disabled={sending}
-                    className="w-full rounded-lg bg-emerald-500 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60 transition">
+                    className="w-full rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60 transition">
                     {sending ? "Sending..." : "Send Message"}
                   </button>
                 </form>

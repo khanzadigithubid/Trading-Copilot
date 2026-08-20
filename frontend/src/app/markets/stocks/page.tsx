@@ -141,19 +141,19 @@ export default function StocksPage() {
             <span className="font-semibold">Trading Copilot</span>
           </Link>
           <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
-            <Link href="/markets" className="hover:text-slate-100">Markets</Link>
-            <Link href="/learn" className="hover:text-slate-100">Learn</Link>
-            <Link href="/news" className="hover:text-slate-100">News</Link>
-            <Link href="/about" className="hover:text-slate-100">About</Link>
+            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
+            <Link href="/news" className="hover:text-slate-100 transition">News</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Get started</Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>
       </nav>
 
-      <section className="border-b border-violet-500/20 bg-violet-500/5 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
+      <section className="border-b border-violet-500/20 bg-violet-500/5 px-4 sm:px-6 py-8 sm:py-14 text-center">
         <span className="text-5xl">📈</span>
         <h1 className="mt-4 text-4xl font-bold text-violet-400 sm:text-5xl">US Stocks</h1>
         <p className="mx-auto mt-4 max-w-2xl text-slate-300">
@@ -170,7 +170,7 @@ export default function StocksPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 space-y-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-6 sm:py-12 space-y-8">
         {STOCKS.map((stock) => (
           <div key={stock.symbol} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -184,7 +184,7 @@ export default function StocksPage() {
                   <p className="text-sm text-slate-400">{stock.name} · CEO: {stock.ceo} · Founded {stock.founded}</p>
                 </div>
               </div>
-              <Link href="/register" className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Trade →</Link>
+              <Link href="/register" className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Trade →</Link>
             </div>
 
             <p className="mt-4 leading-relaxed text-slate-300">{stock.description}</p>
@@ -225,7 +225,7 @@ export default function StocksPage() {
         ))}
       </div>
 
-      <section className="border-t border-slate-800 px-4 sm:px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-10 sm:py-14 text-center">
+      <section className="border-t border-slate-800 px-4 sm:px-6 py-8 sm:py-14 text-center">
         <h2 className="text-2xl font-bold">Get AI signals for all 7 stocks</h2>
         <p className="mt-3 text-slate-400">BUY/SELL/HOLD with plain-English reasoning. Free.</p>
         <Link href="/register" className="mt-6 inline-block rounded-full bg-emerald-500 px-8 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Start free →</Link>

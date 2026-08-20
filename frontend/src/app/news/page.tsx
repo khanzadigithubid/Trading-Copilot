@@ -83,19 +83,19 @@ export default function NewsPage() {
             <span className="font-semibold">Trading Copilot</span>
           </Link>
           <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
-            <Link href="/markets" className="hover:text-slate-100">Markets</Link>
-            <Link href="/learn" className="hover:text-slate-100">Learn</Link>
-            <Link href="/news" className="hover:text-slate-100">News</Link>
-            <Link href="/about" className="hover:text-slate-100">About</Link>
+            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
+            <Link href="/news" className="hover:text-slate-100 transition">News</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400">Get started</Link>
+            <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">Get started</Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
         </div>
       </nav>
 
-      <section className="border-b border-slate-800 bg-slate-900/30 px-4 sm:px-4 sm:px-6 py-6 sm:py-8 sm:py-12 text-center">
+      <section className="border-b border-slate-800 bg-slate-900/30 px-4 sm:px-6 py-6 sm:py-12 text-center">
         <p className="text-xs uppercase tracking-[0.2em] text-emerald-400">Market Intelligence</p>
         <h1 className="mt-3 text-4xl font-bold sm:text-5xl">📰 Market News</h1>
         <p className="mx-auto mt-4 max-w-xl text-slate-400">
@@ -134,7 +134,7 @@ export default function NewsPage() {
             ))}
           </div>
         ) : !data?.articles.length ? (
-          <p className="text-center text-slate-500">No news found.</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center"><span className="text-4xl mb-3">📭</span><p className="font-semibold text-slate-300">No news found</p><p className="text-sm text-slate-500 mt-1">Try selecting a different asset or check back later.</p></div>
         ) : (
           <div className="space-y-4">
             {data.articles.map((article, i) => (

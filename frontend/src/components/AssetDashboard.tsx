@@ -141,7 +141,7 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
           <SkeletonTable rows={6} />
         </div>
       ) : error ? (
-        <p className="mt-8 text-center text-sm text-red-400">{error}</p>
+        <div className="mt-8 flex flex-col items-center justify-center gap-2 text-center"><span className="text-3xl">⚠️</span><p className="text-sm text-red-400">{error}</p></div>
       ) : (
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-full text-left text-sm">

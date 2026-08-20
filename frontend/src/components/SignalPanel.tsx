@@ -78,14 +78,14 @@ export default function SignalPanel({ symbol, accessToken }: SignalPanelProps) {
           <button
             onClick={() => loadSignal(false)}
             disabled={loading}
-            className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50"
+            className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50 transition"
           >
             {loading ? "Analyzing..." : "Get Signal"}
           </button>
           <button
             onClick={() => loadSignal(true)}
             disabled={loading}
-            className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 disabled:opacity-50"
+            className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 disabled:opacity-50 transition"
           >
             Refresh
           </button>

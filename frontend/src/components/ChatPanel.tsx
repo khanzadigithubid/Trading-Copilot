@@ -110,7 +110,7 @@ export default function ChatPanel({ accessToken, selectedSymbol }: ChatPanelProp
             key={suggestion}
             type="button"
             onClick={() => setInput(suggestion)}
-            className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-400 hover:bg-slate-800"
+            className="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-400 hover:bg-slate-800 transition"
           >
             {suggestion}
           </button>
@@ -127,7 +127,7 @@ export default function ChatPanel({ accessToken, selectedSymbol }: ChatPanelProp
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50"
+          className="rounded-xl bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-50 transition"
         >
           Send
         </button>
