@@ -1,13 +1,13 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const SERVER_UNREACHABLE =
-  `Cannot reach the server. Make sure the backend is running on ${API_URL}`;
+  `Cannot reach the server. The backend may be waking up — please wait 30 seconds and try again.`;
 
-// AI endpoints (chat, signals, journal) can take up to 90s with free models
-const AI_PATHS = ["/chat/query", "/signals/", "/journal", "/backtest/run"];
+// AI endpoints can take up to 90s with free models
+const AI_PATHS = ["/chat/query", "/signals/", "/journal", "/backtest/run", "/briefing", "/news-impact", "/trade-planner"];
 
 function getTimeout(path: string): number {
-  return AI_PATHS.some((p) => path.includes(p)) ? 90_000 : 20_000;
+  return AI_PATHS.some((p) => path.includes(p)) ? 90_000 : 25_000;
 }
 
 export async function apiFetch<T>(
@@ -36,14 +36,29 @@ export async function apiFetch<T>(
   } catch (err) {
     clearTimeout(timer);
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new Error("Request timed out. The AI is thinking — please try again.");
+      throw new Error("Request timed out. The server is waking up — please try again in 30 seconds.");
     }
     throw new Error(SERVER_UNREACHABLE);
   } finally {
     clearTimeout(timer);
   }
 
-  const data = await response.json().catch(() => ({}));
+  // Check content type — if HTML returned (server error page), handle gracefully
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    if (!response.ok) {
+      throw new Error(`Server error (${response.status}). Please try again.`);
+    }
+    // Unexpected non-JSON success
+    return {} as T;
+  }
+
+  let data: Record<string, unknown>;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error("Invalid response from server. Please try again.");
+  }
 
   if (!response.ok) {
     const detail = data.detail;
@@ -51,8 +66,8 @@ export async function apiFetch<T>(
       typeof detail === "string"
         ? detail
         : Array.isArray(detail)
-          ? detail.map((item: { msg?: string }) => item.msg).filter(Boolean).join(", ")
-          : data.message || "Request failed";
+          ? (detail as Array<{ msg?: string }>).map((item) => item.msg).filter(Boolean).join(", ")
+          : (data.message as string) || "Request failed";
     throw new Error(message);
   }
 
