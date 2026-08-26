@@ -2,10 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 import secrets
 import logging
-import smtplib
+import httpx
 import asyncio
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta, timezone
 
 from app.core.database import get_db
@@ -23,124 +21,107 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-# ── Gmail SMTP email sender ───────────────────────────────────────────────────
+# ── Resend API email sender (HTTP — works on Render free tier) ────────────────
 
-def _send_reset_email_smtp(to_email: str, reset_link: str) -> None:
-    """Send password reset email via Gmail SMTP (blocking — run in thread pool)."""
-    if not settings.gmail_user or not settings.gmail_pass:
-        logger.warning("[EMAIL] Gmail credentials not configured — skipping email send")
+def _send_reset_email_resend(to_email: str, reset_link: str) -> None:
+    """Send password reset email via Resend API (HTTP POST — no SMTP needed)."""
+    if not settings.resend_api_key:
+        logger.warning("[EMAIL] RESEND_API_KEY not configured — skipping email send")
         return
 
-    subject = "Reset your AI Trading Copilot password"
-    body = f"""Hi,
-
-You requested a password reset for your AI Trading Copilot account.
-
-Click the link below to reset your password:
-
-{reset_link}
-
-This link expires in 1 hour.
-
-If you did not request this, please ignore this email — your account is safe.
-
-— AI Trading Copilot Team
-"""
-
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"]    = f"AI Trading Copilot <{settings.gmail_user}>"
-    msg["To"]      = to_email
-
-    # Plain text part
-    msg.attach(MIMEText(body, "plain"))
-
-    # HTML part — nicer formatting
     html_body = f"""
 <!DOCTYPE html>
 <html>
-<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-             background: #0f172a; color: #e2e8f0; margin: 0; padding: 0;">
-  <div style="max-width: 480px; margin: 40px auto; padding: 0 16px;">
-
-    <!-- Header -->
-    <div style="text-align: center; margin-bottom: 32px;">
-      <div style="display: inline-flex; align-items: center; gap: 8px;">
-        <div style="width: 32px; height: 32px; background: #10b981; border-radius: 8px;
-                    display: inline-flex; align-items: center; justify-content: center;
-                    font-weight: 900; font-size: 12px; color: #0f172a;">AI</div>
-        <span style="font-weight: 700; font-size: 16px; color: #f1f5f9;">Trading Copilot</span>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+             background:#0f172a;color:#e2e8f0;margin:0;padding:0;">
+  <div style="max-width:480px;margin:40px auto;padding:0 16px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;">
+        <div style="width:32px;height:32px;background:#10b981;border-radius:8px;
+                    display:inline-block;text-align:center;line-height:32px;
+                    font-weight:900;font-size:12px;color:#0f172a;">AI</div>
+        <span style="font-weight:700;font-size:16px;color:#f1f5f9;">Trading Copilot</span>
       </div>
     </div>
-
-    <!-- Card -->
-    <div style="background: #1e293b; border: 1px solid #334155;
-                border-radius: 16px; padding: 32px;">
-      <div style="font-size: 32px; margin-bottom: 16px;">🔑</div>
-      <h1 style="font-size: 22px; font-weight: 900; color: #f1f5f9; margin: 0 0 8px 0;">
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:32px;">
+      <div style="font-size:32px;margin-bottom:16px;">🔑</div>
+      <h1 style="font-size:22px;font-weight:900;color:#f1f5f9;margin:0 0 8px 0;">
         Reset your password
       </h1>
-      <p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+      <p style="color:#94a3b8;font-size:14px;line-height:1.6;margin:0 0 24px 0;">
         You requested a password reset for your AI Trading Copilot account.
         Click the button below to set a new password.
       </p>
-
-      <!-- CTA Button -->
       <a href="{reset_link}"
-         style="display: block; background: #10b981; color: #0f172a;
-                text-decoration: none; font-weight: 700; font-size: 14px;
-                text-align: center; padding: 14px 24px; border-radius: 12px;
-                margin-bottom: 24px;">
+         style="display:block;background:#10b981;color:#0f172a;text-decoration:none;
+                font-weight:700;font-size:14px;text-align:center;padding:14px 24px;
+                border-radius:12px;margin-bottom:24px;">
         Reset Password →
       </a>
-
-      <!-- Link fallback -->
-      <p style="color: #64748b; font-size: 12px; margin: 0 0 8px 0;">
+      <p style="color:#64748b;font-size:12px;margin:0 0 8px 0;">
         Or copy this link into your browser:
       </p>
-      <p style="color: #10b981; font-size: 11px; word-break: break-all;
-                background: #0f172a; padding: 8px 12px; border-radius: 8px;
-                border: 1px solid #1e293b; margin: 0 0 24px 0;">
+      <p style="color:#10b981;font-size:11px;word-break:break-all;
+                background:#0f172a;padding:8px 12px;border-radius:8px;
+                border:1px solid #1e293b;margin:0 0 24px 0;">
         {reset_link}
       </p>
-
-      <!-- Expiry warning -->
-      <div style="background: #451a03; border: 1px solid #92400e;
-                  border-radius: 10px; padding: 12px 16px;">
-        <p style="color: #fcd34d; font-size: 12px; margin: 0; font-weight: 600;">
+      <div style="background:#451a03;border:1px solid #92400e;
+                  border-radius:10px;padding:12px 16px;">
+        <p style="color:#fcd34d;font-size:12px;margin:0;font-weight:600;">
           ⏰ This link expires in 1 hour.
         </p>
       </div>
     </div>
-
-    <!-- Footer -->
-    <p style="color: #334155; font-size: 11px; text-align: center; margin-top: 24px;">
+    <p style="color:#334155;font-size:11px;text-align:center;margin-top:24px;">
       If you did not request this, ignore this email — your account is safe.<br/>
-      AI Trading Copilot · Educational purposes only · Not financial advice
+      AI Trading Copilot · Educational purposes only
     </p>
   </div>
 </body>
 </html>
 """
-    msg.attach(MIMEText(html_body, "html"))
+
+    text_body = f"""Hi,
+
+You requested a password reset for your AI Trading Copilot account.
+
+Reset your password here:
+{reset_link}
+
+This link expires in 1 hour.
+
+If you did not request this, ignore this email.
+
+— AI Trading Copilot Team
+"""
+
+    payload = {
+        "from":    "AI Trading Copilot <onboarding@resend.dev>",
+        "to":      [to_email],
+        "subject": "Reset your AI Trading Copilot password",
+        "html":    html_body,
+        "text":    text_body,
+    }
 
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as server:
-            server.login(settings.gmail_user, settings.gmail_pass)
-            server.sendmail(settings.gmail_user, to_email, msg.as_string())
-        logger.info(f"[EMAIL] Reset email sent to {to_email}")
-    except smtplib.SMTPAuthenticationError:
-        logger.error("[EMAIL] Gmail authentication failed — check GMAIL_USER and GMAIL_PASS (use App Password)")
-        raise
+        with httpx.Client(timeout=15) as client:
+            resp = client.post(
+                "https://api.resend.com/emails",
+                json=payload,
+                headers={
+                    "Authorization": f"Bearer {settings.resend_api_key}",
+                    "Content-Type":  "application/json",
+                },
+            )
+        if resp.status_code in (200, 201):
+            logger.info(f"[EMAIL] Reset email sent to {to_email} via Resend")
+        else:
+            logger.error(f"[EMAIL] Resend API error {resp.status_code}: {resp.text}")
+            raise Exception(f"Resend API returned {resp.status_code}: {resp.text}")
     except Exception as e:
         logger.error(f"[EMAIL] Failed to send reset email: {e}")
         raise
-
-
-async def send_reset_email(to_email: str, reset_link: str) -> None:
-    """Async wrapper — runs blocking SMTP in thread pool."""
-    loop = asyncio.get_event_loop()
-    await loop.run_in_executor(None, _send_reset_email_smtp, to_email, reset_link)
 
 
 # ── Auth routes ───────────────────────────────────────────────────────────────
@@ -211,7 +192,7 @@ async def forgot_password(
     reset_link = f"{settings.frontend_url}/reset-password?token={token}"
 
     # Send email in background — don't block the response
-    background_tasks.add_task(_send_reset_email_smtp, user.email, reset_link)
+    background_tasks.add_task(_send_reset_email_resend, user.email, reset_link)
 
     return MessageResponse(message=SAFE_MSG)
 
