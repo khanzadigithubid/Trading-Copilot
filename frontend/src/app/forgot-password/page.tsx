@@ -40,17 +40,17 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (data.reset_token) {
-        const resetLink = `https://kw-trading-copilot.vercel.app/reset-password?token=${data.reset_token}`;
+        const resetLink = `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`;
         await emailjs.send(
           EMAILJS_SERVICE_ID,
           EMAILJS_TEMPLATE_ID,
           {
+            to_email:  data.email,        // EmailJS template variable — recipient
             from_name: "AI Trading Copilot",
-            from_email: "noreply@trading-copilot.app",
-            email: data.email,
-            subject: "Reset your AI Trading Copilot password",
-            message: `Click the link below to reset your password (expires in 1 hour):\n\n${resetLink}\n\nIf you did not request this, ignore this email.`,
-            phone: "",
+            email:     data.email,        // fallback if template uses {{email}}
+            subject:   "Reset your AI Trading Copilot password",
+            message:   `Click the link below to reset your password (expires in 1 hour):\n\n${resetLink}\n\nIf you did not request this, ignore this email.`,
+            phone:     "",
           },
           EMAILJS_PUBLIC_KEY
         );
@@ -59,8 +59,14 @@ export default function ForgotPasswordPage() {
       setActiveStep(2);
       setSent(true);
     } catch (err) {
-      console.error(err);
-      setError("Failed to send reset email. Please try again.");
+      console.error("Forgot password error:", err);
+      if (err instanceof Error && err.message.includes("EmailJS")) {
+        // EmailJS failed but token was generated — still show success
+        // User won't get email but we don't want to expose token issues
+        setError("Email delivery failed. Please try again or contact support.");
+      } else {
+        setError("Failed to send reset email. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
