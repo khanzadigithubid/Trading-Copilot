@@ -109,7 +109,6 @@ function SignalCard({
 export default function CommunityPanel({
   accessToken,
   selectedSymbol,
-  userEmail,
 }: CommunityPanelProps) {
   const [signals, setSignals] = useState<CommunitySignal[]>([]);
   const [loading, setLoading] = useState(true);
