@@ -12,11 +12,40 @@ interface TokenResponse {
 }
 
 const FEATURES = [
-  { icon: "🤖", title: "Explainable AI Signals", desc: "Know exactly WHY the AI says BUY or SELL" },
-  { icon: "📚", title: "AI Trade Journal", desc: "Auto coaching feedback after every trade" },
-  { icon: "🌍", title: "27 Real Markets", desc: "Forex, Crypto, Stocks, Gold, Oil — all live" },
-  { icon: "📊", title: "Portfolio Analytics", desc: "Sharpe ratio, drawdown, equity curve" },
-  { icon: "🔔", title: "Price Alerts", desc: "Get notified when price hits your target" },
+  {
+    icon: "🤖",
+    title: "AI Signals with Full Reasoning",
+    desc: "Not just BUY/SELL — know exactly why the AI thinks so",
+    color: "from-emerald-500/20 to-emerald-500/5",
+    border: "border-emerald-500/20",
+  },
+  {
+    icon: "📊",
+    title: "5-Strategy Backtester",
+    desc: "RSI+MACD, Bollinger Bands, EMA Cross, SuperTrend, Mean Reversion",
+    color: "from-blue-500/20 to-blue-500/5",
+    border: "border-blue-500/20",
+  },
+  {
+    icon: "🎓",
+    title: "AI Trade Coach",
+    desc: "Post-trade analysis: what you did right, what to improve",
+    color: "from-violet-500/20 to-violet-500/5",
+    border: "border-violet-500/20",
+  },
+  {
+    icon: "🌍",
+    title: "27 Live Markets",
+    desc: "Forex, Crypto, Stocks, Gold, Silver, Oil, Indices — all in one place",
+    color: "from-amber-500/20 to-amber-500/5",
+    border: "border-amber-500/20",
+  },
+];
+
+const STATS = [
+  { value: "27", label: "Markets" },
+  { value: "5", label: "Strategies" },
+  { value: "100%", label: "Free" },
 ];
 
 export default function RegisterPage() {
@@ -28,24 +57,25 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [pwStrength, setPwStrength] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => { setMounted(true); }, []);
   useEffect(() => {
     if (status === "authenticated") router.replace("/dashboard");
   }, [status, router]);
 
   useEffect(() => {
-    // Password strength indicator
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    setPwStrength(strength);
+    let s = 0;
+    if (password.length >= 8) s++;
+    if (/[A-Z]/.test(password)) s++;
+    if (/[0-9]/.test(password)) s++;
+    if (/[^A-Za-z0-9]/.test(password)) s++;
+    setPwStrength(s);
   }, [password]);
 
-  if (status === "loading" || status === "authenticated") {
+  if (!mounted || status === "loading" || status === "authenticated") {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
       </div>
     );
@@ -61,7 +91,10 @@ export default function RegisterPage() {
         body: JSON.stringify({ email, password }),
       });
       const result = await signIn("credentials", { email, password, redirect: false });
-      if (result?.error) { setError("Account created! Please sign in."); return; }
+      if (result?.error) {
+        setError("Account created! Please sign in manually.");
+        return;
+      }
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
@@ -71,107 +104,139 @@ export default function RegisterPage() {
     }
   }
 
-  const strengthColors = ["bg-slate-700", "bg-red-500", "bg-amber-500", "bg-blue-500", "bg-emerald-500"];
-  const strengthLabels = ["", "Weak", "Fair", "Good", "Strong"];
+  const strengthMeta = [
+    { label: "", color: "bg-slate-800" },
+    { label: "Weak", color: "bg-red-500" },
+    { label: "Fair", color: "bg-amber-500" },
+    { label: "Good", color: "bg-blue-500" },
+    { label: "Strong", color: "bg-emerald-500" },
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
-      {/* Background glow */}
+    <div className="min-h-screen bg-[#0a0a0f] text-slate-100 overflow-x-hidden">
+
+      {/* Ambient background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-20 h-[600px] w-[600px] rounded-full bg-emerald-500/6 blur-[120px]" />
-        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-blue-500/5 blur-[100px]" />
+        <div className="absolute top-[-15%] left-[-5%] h-[700px] w-[700px] rounded-full bg-emerald-600/8 blur-[150px]" />
+        <div className="absolute bottom-[-10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-violet-600/6 blur-[120px]" />
+        <div className="absolute top-[50%] left-[50%] h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/5 blur-[80px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.012)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.012)_1px,transparent_1px)] bg-[size:72px_72px]" />
       </div>
 
-      {/* Top nav */}
-      <nav className="relative flex items-center justify-between px-6 py-4 border-b border-slate-800/50 bg-slate-950/80 backdrop-blur">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 font-black text-sm shadow-lg shadow-emerald-500/20">
+      {/* Nav */}
+      <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-white/5">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-slate-950 font-black text-sm shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow">
             AI
           </div>
-          <span className="font-bold text-slate-100">Trading Copilot</span>
+          <span className="font-bold text-slate-100 tracking-tight">Trading Copilot</span>
         </Link>
-        <p className="text-sm text-slate-400">
-          Have an account?{" "}
-          <Link href="/login" className="font-semibold text-emerald-400 hover:text-emerald-300 transition">
-            Sign in →
+        <p className="text-sm text-slate-500">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">
+            Sign in
           </Link>
         </p>
       </nav>
 
-      <div className="relative flex items-start justify-center px-4 py-10 lg:min-h-[calc(100vh-65px)] lg:items-center">
-        <div className="w-full max-w-5xl grid gap-10 lg:grid-cols-[1fr_420px] items-center">
+      {/* Main grid */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-73px)] w-full max-w-6xl items-center gap-16 px-6 py-10 lg:grid lg:grid-cols-[1fr_460px]">
 
-          {/* Left panel — desktop only */}
-          <div className="hidden lg:flex flex-col gap-8">
-            {/* Headline */}
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-400 mb-5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                100% Free · No credit card · No broker needed
-              </span>
-              <h2 className="text-4xl font-black leading-tight tracking-tight">
-                The trading platform<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
-                  that explains itself
-                </span>
-              </h2>
-              <p className="mt-4 text-slate-400 leading-relaxed max-w-sm">
-                Not just signals. Full AI reasoning. Trade smarter from day one — paper trade first, real money when you&apos;re ready.
-              </p>
+        {/* ── Left panel (desktop only) ── */}
+        <div className="hidden lg:flex flex-col gap-10">
+
+          {/* Headline */}
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/8 px-4 py-1.5 text-xs font-semibold text-emerald-400 mb-5">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              100% Free · No credit card · No broker needed
             </div>
+            <h2 className="text-5xl font-black leading-tight tracking-tight text-white">
+              Trade smarter<br />
+              <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-400 bg-clip-text text-transparent">
+                with AI by your side
+              </span>
+            </h2>
+            <p className="mt-5 text-base text-slate-500 leading-relaxed max-w-md">
+              Professional trading tools that explain every decision. Learn faster, risk less, trade better.
+            </p>
+          </div>
 
-            {/* Features */}
-            <div className="space-y-3">
-              {FEATURES.map((f) => (
-                <div key={f.title} className="flex items-start gap-4 rounded-2xl border border-slate-800/60 bg-slate-900/40 px-4 py-3.5 hover:border-slate-700 transition">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-lg">
-                    {f.icon}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-200">{f.title}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{f.desc}</p>
-                  </div>
+          {/* Stats row */}
+          <div className="flex items-center gap-6">
+            {STATS.map((s, i) => (
+              <div key={i} className="text-center">
+                <p className="text-3xl font-black text-white">{s.value}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+            <div className="h-8 w-px bg-white/8 mx-2" />
+            <div className="flex -space-x-2">
+              {["🇵🇰", "🇮🇳", "🇺🇸", "🇬🇧", "🇳🇬"].map((flag, i) => (
+                <div key={i} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#0a0a0f] bg-slate-800 text-sm shadow-sm">
+                  {flag}
                 </div>
               ))}
             </div>
-
-            {/* Social proof */}
-            <div className="flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-900/30 px-5 py-4">
-              <div className="flex -space-x-2 shrink-0">
-                {["🇵🇰", "🇮🇳", "🇺🇸", "🇬🇧", "🇳🇬"].map((flag, i) => (
-                  <div key={i} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-slate-900 bg-slate-800 text-base">{flag}</div>
-                ))}
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-300">Traders from 50+ countries</p>
-                <p className="text-xs text-slate-500 mt-0.5">&ldquo;Bloomberg charges $24k/yr for this. This is free.&rdquo;</p>
-              </div>
-            </div>
+            <p className="text-xs text-slate-500">Traders from 50+ countries</p>
           </div>
 
-          {/* Right panel — form */}
-          <div className="w-full">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur p-8 shadow-2xl shadow-black/40">
-              {/* Mobile header */}
-              <div className="lg:hidden mb-6 text-center">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-4">
-                  <span className="text-2xl">🚀</span>
-                </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
-                  100% Free · No credit card
-                </span>
+          {/* Feature cards */}
+          <div className="grid grid-cols-2 gap-3">
+            {FEATURES.map((f) => (
+              <div
+                key={f.title}
+                className={`rounded-2xl border ${f.border} bg-gradient-to-br ${f.color} p-4 backdrop-blur-sm`}
+              >
+                <div className="text-2xl mb-2.5">{f.icon}</div>
+                <p className="text-sm font-semibold text-slate-200 leading-snug">{f.title}</p>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">{f.desc}</p>
               </div>
+            ))}
+          </div>
 
-              <div className="mb-6">
-                <h1 className="text-xl font-black text-slate-100">Create your account</h1>
-                <p className="mt-1 text-sm text-slate-400">Start paper trading with AI in 30 seconds</p>
-              </div>
+          {/* Quote */}
+          <div className="rounded-2xl border border-white/6 bg-white/3 px-5 py-4">
+            <p className="text-sm text-slate-400 italic leading-relaxed">
+              &ldquo;Bloomberg charges $24,000/year for professional terminal access. This gives you AI-powered signals, backtesting, and portfolio analytics for free.&rdquo;
+            </p>
+          </div>
+        </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-slate-300 mb-1.5">
-                    Email address
-                  </label>
+        {/* ── Right panel — form ── */}
+        <div className="w-full">
+
+          {/* Mobile header */}
+          <div className="lg:hidden mb-8 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/8 px-4 py-1.5 text-xs font-semibold text-emerald-400 mb-4">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              100% Free · No credit card
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight">Start trading smarter</h1>
+            <p className="mt-2 text-sm text-slate-500">AI signals, backtesting, paper trading — all free</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/8 bg-white/4 backdrop-blur-xl p-8 shadow-2xl shadow-black/60">
+
+            {/* Desktop header */}
+            <div className="hidden lg:block mb-7">
+              <h1 className="text-2xl font-black text-white tracking-tight">Create your account</h1>
+              <p className="mt-1.5 text-sm text-slate-500">Start paper trading with AI in under 30 seconds</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* Email */}
+              <div className="space-y-2">
+                <label htmlFor="email" className="block text-sm font-medium text-slate-300">
+                  Email address
+                </label>
+                <div className="relative group">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <svg className="h-4 w-4 text-slate-500 group-focus-within:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
                   <input
                     id="email"
                     type="email"
@@ -180,104 +245,131 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 placeholder-slate-600 outline-none transition duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                    className="w-full rounded-xl border border-white/8 bg-white/5 pl-11 pr-4 py-3 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all duration-200 focus:border-emerald-500/60 focus:bg-white/8 focus:ring-2 focus:ring-emerald-500/15"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label htmlFor="password" className="block text-sm font-semibold text-slate-300 mb-1.5">
-                    Password
-                    <span className="ml-1.5 text-xs font-normal text-slate-500">min. 8 characters</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="password"
-                      type={showPw ? "text" : "password"}
-                      required
-                      minLength={8}
-                      autoComplete="new-password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Choose a strong password"
-                      className="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 pr-20 text-sm text-slate-100 placeholder-slate-600 outline-none transition duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPw((p) => !p)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition min-w-[44px] min-h-[36px] flex items-center justify-center"
-                    >
-                      {showPw ? "Hide" : "Show"}
-                    </button>
+              {/* Password */}
+              <div className="space-y-2">
+                <label htmlFor="password" className="block text-sm font-medium text-slate-300">
+                  Password
+                  <span className="ml-1.5 text-xs font-normal text-slate-600">min. 8 characters</span>
+                </label>
+                <div className="relative group">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <svg className="h-4 w-4 text-slate-500 group-focus-within:text-emerald-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
                   </div>
+                  <input
+                    id="password"
+                    type={showPw ? "text" : "password"}
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Choose a strong password"
+                    className="w-full rounded-xl border border-white/8 bg-white/5 pl-11 pr-16 py-3 text-sm text-slate-100 placeholder-slate-600 outline-none transition-all duration-200 focus:border-emerald-500/60 focus:bg-white/8 focus:ring-2 focus:ring-emerald-500/15"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPw((p) => !p)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg px-2 py-1 text-xs font-medium text-slate-500 hover:text-slate-300 hover:bg-white/8 transition-all"
+                  >
+                    {showPw ? "Hide" : "Show"}
+                  </button>
+                </div>
 
-                  {/* Password strength */}
-                  {password.length > 0 && (
-                    <div className="mt-2">
-                      <div className="flex gap-1 mb-1">
-                        {[1, 2, 3, 4].map((i) => (
-                          <div
-                            key={i}
-                            className={`h-1 flex-1 rounded-full transition-all ${i <= pwStrength ? strengthColors[pwStrength] : "bg-slate-800"}`}
-                          />
-                        ))}
-                      </div>
-                      {pwStrength > 0 && (
-                        <p className={`text-xs ${pwStrength >= 3 ? "text-emerald-400" : pwStrength === 2 ? "text-amber-400" : "text-red-400"}`}>
-                          {strengthLabels[pwStrength]} password
+                {/* Strength meter */}
+                {password.length > 0 && (
+                  <div className="mt-2.5 space-y-1.5">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                            i <= pwStrength ? strengthMeta[pwStrength].color : "bg-white/8"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <p className={`text-xs font-medium transition-colors ${
+                        pwStrength >= 3 ? "text-emerald-400" : pwStrength === 2 ? "text-amber-400" : "text-red-400"
+                      }`}>
+                        {strengthMeta[pwStrength].label} password
+                      </p>
+                      {pwStrength < 3 && (
+                        <p className="text-xs text-slate-600">
+                          Add {pwStrength < 1 ? "8+ chars" : pwStrength < 2 ? "uppercase" : "numbers/symbols"}
                         </p>
                       )}
                     </div>
-                  )}
-                </div>
-
-                {error && (
-                  <div className="flex items-start gap-3 rounded-xl border border-red-500/25 bg-red-500/8 px-4 py-3">
-                    <span className="text-red-400 mt-0.5 shrink-0">⚠️</span>
-                    <p className="text-sm text-red-300">{error}</p>
                   </div>
                 )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-xl bg-emerald-500 px-4 py-3.5 text-sm font-bold text-slate-950 transition duration-200 hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
-                >
-                  {loading ? (
-                    <>
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
-                      Creating account...
-                    </>
-                  ) : (
-                    <>Create free account <span>→</span></>
-                  )}
-                </button>
-
-                <p className="text-xs text-slate-500 text-center">
-                  By signing up you agree to our{" "}
-                  <Link href="/terms" className="text-slate-400 hover:text-slate-200 underline underline-offset-2 transition">Terms</Link>
-                  {" "}&amp;{" "}
-                  <Link href="/privacy" className="text-slate-400 hover:text-slate-200 underline underline-offset-2 transition">Privacy Policy</Link>
-                </p>
-              </form>
-
-              <div className="my-5 flex items-center gap-3">
-                <div className="flex-1 border-t border-slate-800" />
-                <span className="text-xs text-slate-600 uppercase tracking-widest">or</span>
-                <div className="flex-1 border-t border-slate-800" />
               </div>
 
-              <Link
-                href="/login"
-                className="block w-full rounded-xl border border-slate-700 px-4 py-3 text-center text-sm font-semibold text-slate-300 hover:bg-slate-800/60 hover:border-slate-600 hover:text-slate-100 transition duration-200"
+              {/* Error */}
+              {error && (
+                <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/8 px-4 py-3">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-red-500/15">
+                    <svg className="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-red-300">{error}</p>
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:shadow-emerald-500/40 hover:from-emerald-400 hover:to-emerald-500 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                Sign in to existing account
-              </Link>
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
+                    Creating account...
+                  </>
+                ) : (
+                  <>
+                    Create free account
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </>
+                )}
+              </button>
+
+              <p className="text-xs text-slate-600 text-center leading-relaxed">
+                By creating an account you agree to our{" "}
+                <Link href="/terms" className="text-slate-500 hover:text-slate-300 underline underline-offset-2 transition">Terms</Link>
+                {" "}&amp;{" "}
+                <Link href="/privacy" className="text-slate-500 hover:text-slate-300 underline underline-offset-2 transition">Privacy Policy</Link>
+              </p>
+            </form>
+
+            {/* Divider */}
+            <div className="my-6 flex items-center gap-3">
+              <div className="flex-1 border-t border-white/6" />
+              <span className="text-xs text-slate-600 font-medium uppercase tracking-widest">or</span>
+              <div className="flex-1 border-t border-white/6" />
             </div>
 
-            <p className="mt-4 text-center text-xs text-slate-600">
-              Paper trading only · Educational purposes only · Not financial advice
-            </p>
+            <Link
+              href="/login"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/8 bg-white/4 px-4 py-3 text-sm font-semibold text-slate-300 hover:bg-white/8 hover:border-white/12 hover:text-slate-100 transition-all duration-200"
+            >
+              Sign in to existing account
+            </Link>
           </div>
+
+          <p className="mt-5 text-center text-xs text-slate-700">
+            Paper trading only · Educational purposes · Not financial advice
+          </p>
         </div>
       </div>
     </div>
