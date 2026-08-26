@@ -2,11 +2,6 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import emailjs from "@emailjs/browser";
-
-const EMAILJS_SERVICE_ID       = "service_4s8szz7";
-const EMAILJS_RESET_TEMPLATE_ID = "template_xfbcn2a";
-const EMAILJS_PUBLIC_KEY        = "P3bPGuO0JpSGjBpSJ";
 
 const STEPS = [
   { num: 1, label: "Enter email" },
@@ -15,10 +10,10 @@ const STEPS = [
 ];
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail]     = useState("");
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent]       = useState(false);
-  const [error, setError]     = useState("");
+  const [email, setEmail]           = useState("");
+  const [loading, setLoading]       = useState(false);
+  const [sent, setSent]             = useState(false);
+  const [error, setError]           = useState("");
   const [activeStep, setActiveStep] = useState(1);
 
   async function handleSubmit(e: FormEvent) {
@@ -35,33 +30,17 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email }),
       });
 
-      if (!res.ok) { setError("Something went wrong. Please try again."); return; }
-
-      const data = await res.json();
-
-      if (data.reset_token) {
-        try {
-          await emailjs.send(
-            EMAILJS_SERVICE_ID,
-            EMAILJS_RESET_TEMPLATE_ID,
-            {
-              email:      data.email,
-              reset_link: `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`,
-            },
-            EMAILJS_PUBLIC_KEY
-          );
-        } catch (emailErr) {
-          // EmailJS failed — log for debugging but don't block user
-          console.error("EmailJS error:", emailErr);
-          // Still show success — token was generated, user can contact support
-        }
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setError(data?.detail || "Something went wrong. Please try again.");
+        return;
       }
 
+      // Backend sends email directly via Gmail SMTP — no EmailJS needed
       setActiveStep(2);
       setSent(true);
-    } catch (err) {
-      console.error("Forgot password error:", err);
-      setError("Something went wrong. Please try again.");
+    } catch {
+      setError("Cannot reach the server. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -129,7 +108,7 @@ export default function ForgotPasswordPage() {
           <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-8 shadow-xl shadow-black/30">
 
             {sent ? (
-              /* Success state */
+              /* ── Success state ── */
               <div className="text-center">
                 <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/25 bg-emerald-500/10 text-4xl">
                   📧
@@ -167,7 +146,7 @@ export default function ForgotPasswordPage() {
                 </div>
               </div>
             ) : (
-              /* Form state */
+              /* ── Form state ── */
               <>
                 <div className="mb-7">
                   <div className="mb-5 text-4xl">🔑</div>
@@ -226,7 +205,6 @@ export default function ForgotPasswordPage() {
             )}
           </div>
 
-          {/* Security note */}
           {!sent && (
             <p className="mt-4 text-center text-xs text-slate-700">
               🔒 Token expires in 1 hour · No spam ever

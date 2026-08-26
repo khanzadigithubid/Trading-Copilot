@@ -1,7 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 import secrets
 import logging
+import smtplib
+import asyncio
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta, timezone
 
 from app.core.database import get_db
@@ -18,6 +22,128 @@ from app.core.config import settings
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+
+# ── Gmail SMTP email sender ───────────────────────────────────────────────────
+
+def _send_reset_email_smtp(to_email: str, reset_link: str) -> None:
+    """Send password reset email via Gmail SMTP (blocking — run in thread pool)."""
+    if not settings.gmail_user or not settings.gmail_pass:
+        logger.warning("[EMAIL] Gmail credentials not configured — skipping email send")
+        return
+
+    subject = "Reset your AI Trading Copilot password"
+    body = f"""Hi,
+
+You requested a password reset for your AI Trading Copilot account.
+
+Click the link below to reset your password:
+
+{reset_link}
+
+This link expires in 1 hour.
+
+If you did not request this, please ignore this email — your account is safe.
+
+— AI Trading Copilot Team
+"""
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = f"AI Trading Copilot <{settings.gmail_user}>"
+    msg["To"]      = to_email
+
+    # Plain text part
+    msg.attach(MIMEText(body, "plain"))
+
+    # HTML part — nicer formatting
+    html_body = f"""
+<!DOCTYPE html>
+<html>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+             background: #0f172a; color: #e2e8f0; margin: 0; padding: 0;">
+  <div style="max-width: 480px; margin: 40px auto; padding: 0 16px;">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <div style="display: inline-flex; align-items: center; gap: 8px;">
+        <div style="width: 32px; height: 32px; background: #10b981; border-radius: 8px;
+                    display: inline-flex; align-items: center; justify-content: center;
+                    font-weight: 900; font-size: 12px; color: #0f172a;">AI</div>
+        <span style="font-weight: 700; font-size: 16px; color: #f1f5f9;">Trading Copilot</span>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div style="background: #1e293b; border: 1px solid #334155;
+                border-radius: 16px; padding: 32px;">
+      <div style="font-size: 32px; margin-bottom: 16px;">🔑</div>
+      <h1 style="font-size: 22px; font-weight: 900; color: #f1f5f9; margin: 0 0 8px 0;">
+        Reset your password
+      </h1>
+      <p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+        You requested a password reset for your AI Trading Copilot account.
+        Click the button below to set a new password.
+      </p>
+
+      <!-- CTA Button -->
+      <a href="{reset_link}"
+         style="display: block; background: #10b981; color: #0f172a;
+                text-decoration: none; font-weight: 700; font-size: 14px;
+                text-align: center; padding: 14px 24px; border-radius: 12px;
+                margin-bottom: 24px;">
+        Reset Password →
+      </a>
+
+      <!-- Link fallback -->
+      <p style="color: #64748b; font-size: 12px; margin: 0 0 8px 0;">
+        Or copy this link into your browser:
+      </p>
+      <p style="color: #10b981; font-size: 11px; word-break: break-all;
+                background: #0f172a; padding: 8px 12px; border-radius: 8px;
+                border: 1px solid #1e293b; margin: 0 0 24px 0;">
+        {reset_link}
+      </p>
+
+      <!-- Expiry warning -->
+      <div style="background: #451a03; border: 1px solid #92400e;
+                  border-radius: 10px; padding: 12px 16px;">
+        <p style="color: #fcd34d; font-size: 12px; margin: 0; font-weight: 600;">
+          ⏰ This link expires in 1 hour.
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p style="color: #334155; font-size: 11px; text-align: center; margin-top: 24px;">
+      If you did not request this, ignore this email — your account is safe.<br/>
+      AI Trading Copilot · Educational purposes only · Not financial advice
+    </p>
+  </div>
+</body>
+</html>
+"""
+    msg.attach(MIMEText(html_body, "html"))
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as server:
+            server.login(settings.gmail_user, settings.gmail_pass)
+            server.sendmail(settings.gmail_user, to_email, msg.as_string())
+        logger.info(f"[EMAIL] Reset email sent to {to_email}")
+    except smtplib.SMTPAuthenticationError:
+        logger.error("[EMAIL] Gmail authentication failed — check GMAIL_USER and GMAIL_PASS (use App Password)")
+        raise
+    except Exception as e:
+        logger.error(f"[EMAIL] Failed to send reset email: {e}")
+        raise
+
+
+async def send_reset_email(to_email: str, reset_link: str) -> None:
+    """Async wrapper — runs blocking SMTP in thread pool."""
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, _send_reset_email_smtp, to_email, reset_link)
+
+
+# ── Auth routes ───────────────────────────────────────────────────────────────
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 def register(payload: UserRegister, db: Session = Depends(get_db)):
@@ -62,39 +188,42 @@ def refresh_token(current_user: User = Depends(get_current_user)):
     return TokenResponse(access_token=token)
 
 
-@router.post("/forgot-password", response_model=ForgotPasswordResponse)
-def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db)):
-    """Generate reset token — frontend sends email via EmailJS."""
-    user = db.query(User).filter(User.email == payload.email.lower()).first()
+@router.post("/forgot-password", response_model=MessageResponse)
+async def forgot_password(
+    payload: ForgotPasswordRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """Generate reset token and send email via Gmail SMTP."""
+    # Always return same message — don't reveal if email exists
+    SAFE_MSG = "If that email is registered, a reset link has been sent."
 
+    user = db.query(User).filter(User.email == payload.email.lower()).first()
     if not user:
-        return ForgotPasswordResponse(
-            message="If that email exists, a reset link has been sent.",
-            reset_token="",
-            email=payload.email,
-        )
+        return MessageResponse(message=SAFE_MSG)
 
     token = secrets.token_hex(32)
-    user.reset_token = token
+    user.reset_token        = token
     user.reset_token_expiry = datetime.now(timezone.utc) + timedelta(hours=1)
     db.commit()
     logger.info(f"[RESET] Token generated for {user.email}")
 
-    return ForgotPasswordResponse(
-        message="If that email exists, a reset link has been sent.",
-        reset_token=token,
-        email=user.email,
-    )
+    reset_link = f"{settings.frontend_url}/reset-password?token={token}"
+
+    # Send email in background — don't block the response
+    background_tasks.add_task(_send_reset_email_smtp, user.email, reset_link)
+
+    return MessageResponse(message=SAFE_MSG)
 
 
 @router.get("/verify-reset-token/{token}")
 def verify_reset_token(token: str, db: Session = Depends(get_db)):
     """Check if a reset token is valid."""
     clean = token.strip()
-    user = db.query(User).filter(User.reset_token == clean).first()
+    user  = db.query(User).filter(User.reset_token == clean).first()
     if not user:
-        return {"valid": False, "reason": "token not found", "token_len": len(clean)}
-    now = datetime.now(timezone.utc)
+        return {"valid": False, "reason": "token not found"}
+    now    = datetime.now(timezone.utc)
     expiry = user.reset_token_expiry
     if expiry and expiry.tzinfo is None:
         expiry = expiry.replace(tzinfo=timezone.utc)
@@ -109,15 +238,10 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
     logger.info(f"[RESET] Token received len={len(clean_token)} prefix={clean_token[:16]}")
 
     user = db.query(User).filter(User.reset_token == clean_token).first()
-
     if not user or user.reset_token_expiry is None:
-        pending = db.query(User).filter(User.reset_token.isnot(None)).all()
-        for u in pending:
-            db_tok = str(u.reset_token or "")
-            logger.warning(f"[RESET] DB token len={len(db_tok)} prefix={db_tok[:16]} match={db_tok==clean_token}")
         raise HTTPException(status_code=400, detail="Invalid or expired reset token.")
 
-    now = datetime.now(timezone.utc)
+    now    = datetime.now(timezone.utc)
     expiry = user.reset_token_expiry
     if expiry.tzinfo is None:
         expiry = expiry.replace(tzinfo=timezone.utc)
@@ -125,8 +249,8 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
     if now > expiry:
         raise HTTPException(status_code=400, detail="Reset token has expired. Please request a new one.")
 
-    user.password_hash = get_password_hash(payload.new_password)
-    user.reset_token = None
+    user.password_hash      = get_password_hash(payload.new_password)
+    user.reset_token        = None
     user.reset_token_expiry = None
     db.commit()
 
