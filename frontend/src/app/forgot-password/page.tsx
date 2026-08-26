@@ -40,12 +40,11 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (data.reset_token) {
-        const resetLink = `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`;
         await emailjs.send(
           EMAILJS_SERVICE_ID,
           EMAILJS_RESET_TEMPLATE_ID,
           {
-            email:      data.email,       // matches {{email}} in template To Email field
+            email:      data.email,
             reset_link: `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`,
           },
           EMAILJS_PUBLIC_KEY
