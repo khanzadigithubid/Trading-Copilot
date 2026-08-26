@@ -40,28 +40,28 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (data.reset_token) {
-        await emailjs.send(
-          EMAILJS_SERVICE_ID,
-          EMAILJS_RESET_TEMPLATE_ID,
-          {
-            email:      data.email,
-            reset_link: `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`,
-          },
-          EMAILJS_PUBLIC_KEY
-        );
+        try {
+          await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_RESET_TEMPLATE_ID,
+            {
+              email:      data.email,
+              reset_link: `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`,
+            },
+            EMAILJS_PUBLIC_KEY
+          );
+        } catch (emailErr) {
+          // EmailJS failed — log for debugging but don't block user
+          console.error("EmailJS error:", emailErr);
+          // Still show success — token was generated, user can contact support
+        }
       }
 
       setActiveStep(2);
       setSent(true);
     } catch (err) {
       console.error("Forgot password error:", err);
-      if (err instanceof Error && err.message.includes("EmailJS")) {
-        // EmailJS failed but token was generated — still show success
-        // User won't get email but we don't want to expose token issues
-        setError("Email delivery failed. Please try again or contact support.");
-      } else {
-        setError("Failed to send reset email. Please try again.");
-      }
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
