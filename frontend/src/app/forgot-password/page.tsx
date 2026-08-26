@@ -4,9 +4,9 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import emailjs from "@emailjs/browser";
 
-const EMAILJS_SERVICE_ID  = "service_4s8szz7";
-const EMAILJS_TEMPLATE_ID = "template_s91wpzj";
-const EMAILJS_PUBLIC_KEY  = "P3bPGuO0JpSGjBpSJ";
+const EMAILJS_SERVICE_ID       = "service_4s8szz7";
+const EMAILJS_RESET_TEMPLATE_ID = "template_xfbcn2a";
+const EMAILJS_PUBLIC_KEY        = "P3bPGuO0JpSGjBpSJ";
 
 const STEPS = [
   { num: 1, label: "Enter email" },
@@ -43,14 +43,10 @@ export default function ForgotPasswordPage() {
         const resetLink = `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`;
         await emailjs.send(
           EMAILJS_SERVICE_ID,
-          EMAILJS_TEMPLATE_ID,
+          EMAILJS_RESET_TEMPLATE_ID,
           {
-            to_email:  data.email,        // EmailJS template variable — recipient
-            from_name: "AI Trading Copilot",
-            email:     data.email,        // fallback if template uses {{email}}
-            subject:   "Reset your AI Trading Copilot password",
-            message:   `Click the link below to reset your password (expires in 1 hour):\n\n${resetLink}\n\nIf you did not request this, ignore this email.`,
-            phone:     "",
+            email:      data.email,       // matches {{email}} in template To Email field
+            reset_link: `https://kw-trading-copilot.vercel.app/reset-password?token=${encodeURIComponent(data.reset_token)}`,
           },
           EMAILJS_PUBLIC_KEY
         );
