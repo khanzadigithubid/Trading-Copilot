@@ -109,7 +109,7 @@ class BacktestEngine:
         return {
             BacktestRange.w1: HistoryRange.w1,
             BacktestRange.m1: HistoryRange.m1,
-            BacktestRange.y1: HistoryRange.y1,
+            BacktestRange.y1: HistoryRange.m1,   # use monthly endpoint which returns daily bars (more data)
         }[range]
 
     # ── 1. RSI + MACD ─────────────────────────────────────────────────────────

@@ -1,15 +1,18 @@
 """
 Admin stats endpoint — only accessible by the configured ADMIN_EMAIL.
+All stats use aggregated queries — no N+1 loops.
 """
 from collections import Counter
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
+from app.models.asset import Asset
 from app.models.community_signal import CommunitySignal
 from app.models.signal import Signal
 from app.models.trade import Trade
@@ -70,59 +73,74 @@ def get_admin_stats(
     week = now - timedelta(days=7)
     month = now - timedelta(days=30)
 
-    # Users
+    # ── Users (single query) ─────────────────────────────────────────────────
     all_users = db.query(User).order_by(User.created_at.desc()).all()
     total_users = len(all_users)
-    new_today = sum(1 for u in all_users if u.created_at and u.created_at.replace(tzinfo=timezone.utc) >= today)
-    new_week = sum(1 for u in all_users if u.created_at and u.created_at.replace(tzinfo=timezone.utc) >= week)
-    new_month = sum(1 for u in all_users if u.created_at and u.created_at.replace(tzinfo=timezone.utc) >= month)
 
-    # Recent users with activity counts
+    def _aware(dt: datetime) -> datetime:
+        return dt.replace(tzinfo=timezone.utc) if dt and dt.tzinfo is None else dt
+
+    new_today = sum(1 for u in all_users if u.created_at and _aware(u.created_at) >= today)
+    new_week  = sum(1 for u in all_users if u.created_at and _aware(u.created_at) >= week)
+    new_month = sum(1 for u in all_users if u.created_at and _aware(u.created_at) >= month)
+
+    # ── Trade counts per user (single query) ─────────────────────────────────
+    trade_counts_raw = (
+        db.query(Trade.user_id, func.count(Trade.id).label("cnt"))
+        .group_by(Trade.user_id)
+        .all()
+    )
+    trade_counts = {str(row.user_id): row.cnt for row in trade_counts_raw}
+
+    # ── Community signal counts per user (single query) ───────────────────────
+    signal_counts_raw = (
+        db.query(CommunitySignal.user_id, func.count(CommunitySignal.id).label("cnt"))
+        .group_by(CommunitySignal.user_id)
+        .all()
+    )
+    signal_counts = {str(row.user_id): row.cnt for row in signal_counts_raw}
+
+    # ── Recent users (top 10) ─────────────────────────────────────────────────
     recent_users = []
     for u in all_users[:10]:
-        trade_count = db.query(Trade).filter(Trade.user_id == u.id).count()
-        signal_count = db.query(CommunitySignal).filter(CommunitySignal.user_id == u.id).count()
+        uid = str(u.id)
         recent_users.append(RecentUser(
-            email=_mask(u.email),
+            email=u.email,  # admin sees full email — they own the platform
             joined=u.created_at.strftime("%Y-%m-%d %H:%M") if u.created_at else "",
-            trade_count=trade_count,
-            signal_count=signal_count,
+            trade_count=trade_counts.get(uid, 0),
+            signal_count=signal_counts.get(uid, 0),
         ))
 
-    # Trades
-    all_trades = db.query(Trade).all()
-    total_trades = len(all_trades)
-    open_trades = sum(1 for t in all_trades if t.status == "open")
-    closed_trades = sum(1 for t in all_trades if t.status == "closed")
+    # ── Trade aggregates (single query each) ──────────────────────────────────
+    total_trades  = db.query(func.count(Trade.id)).scalar() or 0
+    open_trades   = db.query(func.count(Trade.id)).filter(Trade.status == "open").scalar() or 0
+    closed_trades = db.query(func.count(Trade.id)).filter(Trade.status == "closed").scalar() or 0
 
-    # Signals
-    total_signals = db.query(Signal).count()
-    total_community = db.query(CommunitySignal).count()
+    # ── Signal aggregates ─────────────────────────────────────────────────────
+    total_signals    = db.query(func.count(Signal.id)).scalar() or 0
+    total_community  = db.query(func.count(CommunitySignal.id)).scalar() or 0
 
-    # Top assets traded
-    from app.models.asset import Asset
-    trade_asset_counts: Counter = Counter()
-    for t in all_trades:
-        asset = db.query(Asset).filter(Asset.id == t.asset_id).first()
-        if asset:
-            trade_asset_counts[asset.symbol] += 1
+    # ── Top traded assets (join + group) ──────────────────────────────────────
+    top_traded_raw = (
+        db.query(Asset.symbol, func.count(Trade.id).label("cnt"))
+        .join(Trade, Trade.asset_id == Asset.id)
+        .group_by(Asset.symbol)
+        .order_by(func.count(Trade.id).desc())
+        .limit(5)
+        .all()
+    )
+    top_traded = [{"symbol": row.symbol, "count": row.cnt} for row in top_traded_raw]
 
-    top_traded = [
-        {"symbol": sym, "count": count}
-        for sym, count in trade_asset_counts.most_common(5)
-    ]
-
-    # Top assets signaled
-    signal_asset_counts: Counter = Counter()
-    for s in db.query(Signal).all():
-        asset = db.query(Asset).filter(Asset.id == s.asset_id).first()
-        if asset:
-            signal_asset_counts[asset.symbol] += 1
-
-    top_signaled = [
-        {"symbol": sym, "count": count}
-        for sym, count in signal_asset_counts.most_common(5)
-    ]
+    # ── Top signaled assets (join + group) ────────────────────────────────────
+    top_signaled_raw = (
+        db.query(Asset.symbol, func.count(Signal.id).label("cnt"))
+        .join(Signal, Signal.asset_id == Asset.id)
+        .group_by(Asset.symbol)
+        .order_by(func.count(Signal.id).desc())
+        .limit(5)
+        .all()
+    )
+    top_signaled = [{"symbol": row.symbol, "count": row.cnt} for row in top_signaled_raw]
 
     return AdminStats(
         total_users=total_users,
@@ -139,8 +157,3 @@ def get_admin_stats(
         top_assets_signaled=top_signaled,
         generated_at=now.isoformat(),
     )
-
-
-def _mask(email: str) -> str:
-    """Show full email to admin — they own the platform."""
-    return email

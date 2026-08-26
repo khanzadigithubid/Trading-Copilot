@@ -100,6 +100,7 @@ class SignalEngine:
             confidence=ai_result["confidence"],
             reasoning=ai_result["reasoning"],
             risk_level=ai_result["risk_level"].value,
+            source=ai_result.get("source", "rules"),
         )
         db.add(row)
         db.commit()
@@ -123,6 +124,7 @@ class SignalEngine:
             confidence=row.confidence or 0,
             reasoning=row.reasoning or "",
             risk_level=risk_level,
+            source=row.source or "rules",
             created_at=row.created_at,
         )
 

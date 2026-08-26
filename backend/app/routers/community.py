@@ -31,6 +31,7 @@ class CommunitySignalResponse(BaseModel):
     timeframe: str
     upvotes: int
     author_email: str          # partial — only show first part
+    is_own: bool = False       # True if current user is the author
     created_at: str
     voted_by_me: bool = False
 
@@ -56,6 +57,7 @@ def _to_response(
     sig: CommunitySignal,
     author_email: str,
     voted_by_me: bool,
+    is_own: bool = False,
 ) -> CommunitySignalResponse:
     return CommunitySignalResponse(
         id=str(sig.id),
@@ -66,6 +68,7 @@ def _to_response(
         timeframe=sig.timeframe,
         upvotes=sig.upvotes,
         author_email=_mask_email(author_email),
+        is_own=is_own,
         created_at=sig.created_at.isoformat(),
         voted_by_me=voted_by_me,
     )
@@ -96,7 +99,7 @@ def get_feed(
     }
 
     signals = [
-        _to_response(sig, user.email, str(sig.id) in my_votes)
+        _to_response(sig, user.email, str(sig.id) in my_votes, is_own=sig.user_id == current_user.id)
         for sig, user in rows
     ]
     return CommunityFeedResponse(signals=signals, total=len(signals))
@@ -119,7 +122,7 @@ def post_signal(
     db.add(sig)
     db.commit()
     db.refresh(sig)
-    return _to_response(sig, current_user.email, False)
+    return _to_response(sig, current_user.email, False, is_own=True)
 
 
 @router.post("/{signal_id}/vote", response_model=CommunitySignalResponse)
@@ -158,7 +161,12 @@ def vote(
     db.refresh(sig)
 
     author = db.query(User).filter(User.id == sig.user_id).first()
-    return _to_response(sig, author.email if author else "unknown", voted)
+    return _to_response(
+        sig,
+        author.email if author else "unknown",
+        voted,
+        is_own=(sig.user_id == current_user.id),
+    )
 
 
 @router.delete("/{signal_id}", status_code=status.HTTP_204_NO_CONTENT)

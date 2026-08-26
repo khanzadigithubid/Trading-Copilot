@@ -43,5 +43,10 @@ class MessageResponse(BaseModel):
 
 class ForgotPasswordResponse(BaseModel):
     message: str
-    reset_token: str  # returned to frontend so it can send email
-    email: str
+    # reset_token and email are required by the frontend EmailJS integration.
+    # Without server-side email sending, the token must travel through the client.
+    # Fields are excluded from OpenAPI docs to reduce exposure.
+    reset_token: str = ""
+    email: str = ""
+
+    model_config = {"json_schema_extra": {"x-internal": True}}

@@ -1,13 +1,22 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-const SERVER_UNREACHABLE =
-  `Cannot reach the server. The backend may be waking up — please wait 30 seconds and try again.`;
-
 // AI endpoints can take up to 90s with free models
 const AI_PATHS = ["/chat/query", "/signals/", "/journal", "/backtest/run", "/briefing", "/news-impact", "/trade-planner"];
 
 function getTimeout(path: string): number {
   return AI_PATHS.some((p) => path.includes(p)) ? 90_000 : 25_000;
+}
+
+/** Thrown when the server is unreachable or timed out — trigger wake-up UI */
+export class ServerWakingUpError extends Error {
+  constructor(message = "Server is waking up — please wait...") {
+    super(message);
+    this.name = "ServerWakingUpError";
+  }
+}
+
+export function isWakingUp(err: unknown): boolean {
+  return err instanceof ServerWakingUpError;
 }
 
 export async function apiFetch<T>(
@@ -36,9 +45,14 @@ export async function apiFetch<T>(
   } catch (err) {
     clearTimeout(timer);
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new Error("Request timed out. The server is waking up — please try again in 30 seconds.");
+      throw new ServerWakingUpError(
+        "Request timed out. The server is waking up — retrying automatically in 35 seconds."
+      );
     }
-    throw new Error(SERVER_UNREACHABLE);
+    // Network error = server unreachable = likely sleeping
+    throw new ServerWakingUpError(
+      "Cannot reach the server. It may be waking up — retrying automatically."
+    );
   } finally {
     clearTimeout(timer);
   }
@@ -49,7 +63,6 @@ export async function apiFetch<T>(
     if (!response.ok) {
       throw new Error(`Server error (${response.status}). Please try again.`);
     }
-    // Unexpected non-JSON success
     return {} as T;
   }
 

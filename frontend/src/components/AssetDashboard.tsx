@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { SkeletonTable } from "@/components/Skeleton";
+import ServerWakeup from "@/components/ui/ServerWakeup";
 import { usePriceWebSocket } from "@/hooks/usePriceWebSocket";
 import { fetchAssets } from "@/lib/market";
+import { isWakingUp } from "@/lib/api";
 import type { Asset, MarketType, PriceUpdate } from "@/types/market";
 
 const MARKET_TABS: { id: MarketType | "all"; label: string }[] = [
@@ -15,23 +17,17 @@ const MARKET_TABS: { id: MarketType | "all"; label: string }[] = [
 ];
 
 function formatPrice(price: number, marketType: MarketType): string {
-  if (marketType === "forex") {
-    return price.toFixed(5);
-  }
-  if (marketType === "crypto" && price >= 1000) {
+  if (marketType === "forex") return price.toFixed(5);
+  if (marketType === "crypto" && price >= 1000)
     return price.toLocaleString(undefined, { maximumFractionDigits: 2 });
-  }
   return price.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
 function marketBadgeClass(marketType: MarketType): string {
   switch (marketType) {
-    case "forex":
-      return "bg-blue-500/10 text-blue-300 border-blue-500/20";
-    case "crypto":
-      return "bg-amber-500/10 text-amber-300 border-amber-500/20";
-    case "stock":
-      return "bg-violet-500/10 text-violet-300 border-violet-500/20";
+    case "forex":  return "bg-blue-500/10 text-blue-300 border-blue-500/20";
+    case "crypto": return "bg-amber-500/10 text-amber-300 border-amber-500/20";
+    case "stock":  return "bg-violet-500/10 text-violet-300 border-violet-500/20";
   }
 }
 
@@ -47,6 +43,27 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [wakingUp, setWakingUp] = useState(false);
+
+  const loadAssets = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setWakingUp(false);
+    try {
+      const data = await fetchAssets(undefined, accessToken);
+      setAssets(data);
+    } catch (err) {
+      if (isWakingUp(err)) {
+        setWakingUp(true);
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to load assets");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [accessToken]);
+
+  useEffect(() => { loadAssets(); }, [loadAssets]);
 
   const filteredAssets = useMemo(() => {
     let list = activeMarket === "all" ? assets : assets.filter((a) => a.market_type === activeMarket);
@@ -57,60 +74,32 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
     return list;
   }, [activeMarket, assets, search]);
 
-  const symbols = useMemo(() => filteredAssets.map((asset) => asset.symbol), [filteredAssets]);
+  const symbols = useMemo(() => filteredAssets.map((a) => a.symbol), [filteredAssets]);
   const { prices, connected } = usePriceWebSocket(symbols);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadAssets() {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchAssets(undefined, accessToken);
-        if (!cancelled) {
-          setAssets(data);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to load assets");
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadAssets();
-    return () => {
-      cancelled = true;
-    };
-  }, [accessToken]);
 
   return (
     <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">
+      {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-lg font-semibold">Live Market Prices</h2>
           <p className="mt-1 text-sm text-slate-400">
-            Unified Forex, Crypto, and Stock feed with real-time WebSocket updates. Click a row for AI signals.
+            Unified Forex, Crypto, and Stock feed. Click a row for AI signals.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <span
-            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 ${
-              connected
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                : "border-slate-700 bg-slate-950/60 text-slate-400"
-            }`}
-          >
-            <span className={`h-2 w-2 rounded-full ${connected ? "bg-emerald-400 animate-pulse" : "bg-slate-500"}`} />
-            {connected ? "Live" : "Connecting..."}
-          </span>
-        </div>
+        <span
+          className={`inline-flex items-center gap-2 self-start rounded-full border px-3 py-1 text-xs ${
+            connected
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+              : "border-slate-700 bg-slate-950/60 text-slate-400"
+          }`}
+        >
+          <span className={`h-2 w-2 rounded-full ${connected ? "bg-emerald-400 animate-pulse" : "bg-slate-500"}`} />
+          {connected ? "Live" : "Connecting..."}
+        </span>
       </div>
 
+      {/* Filters */}
       <div className="mt-6 flex flex-wrap items-center gap-2">
         {MARKET_TABS.map((tab) => (
           <button
@@ -136,12 +125,24 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
         </div>
       </div>
 
+      {/* States */}
       {loading ? (
+        <div className="mt-6"><SkeletonTable rows={6} /></div>
+      ) : wakingUp ? (
         <div className="mt-6">
-          <SkeletonTable rows={6} />
+          <ServerWakeup onRetry={loadAssets} />
         </div>
       ) : error ? (
-        <div className="mt-8 flex flex-col items-center justify-center gap-2 text-center"><span className="text-3xl">⚠️</span><p className="text-sm text-red-400">{error}</p></div>
+        <div className="mt-8 flex flex-col items-center gap-2 text-center">
+          <span className="text-3xl">⚠️</span>
+          <p className="text-sm text-red-400">{error}</p>
+          <button
+            onClick={loadAssets}
+            className="mt-2 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-400 hover:bg-slate-800"
+          >
+            Try again
+          </button>
+        </div>
       ) : (
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-full text-left text-sm">
@@ -159,21 +160,21 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
               {filteredAssets.map((asset) => {
                 const live = prices[asset.symbol] as PriceUpdate | undefined;
                 const changePercent = live?.change_percent ?? 0;
-                const isUp = (changePercent ?? 0) >= 0;
+                const isUp = changePercent >= 0;
 
                 return (
                   <tr
                     key={asset.symbol}
                     onClick={() => onSelectSymbol?.(asset.symbol)}
                     className={`cursor-pointer border-b border-slate-800/80 transition hover:bg-slate-950/40 ${
-                      selectedSymbol === asset.symbol ? "bg-emerald-500/5 ring-1 ring-inset ring-emerald-500/30" : ""
+                      selectedSymbol === asset.symbol
+                        ? "bg-emerald-500/5 ring-1 ring-inset ring-emerald-500/30"
+                        : ""
                     }`}
                   >
                     <td className="px-4 py-4 font-semibold text-slate-100">{asset.symbol}</td>
                     <td className="px-4 py-4">
-                      <span
-                        className={`rounded-full border px-2.5 py-1 text-xs capitalize ${marketBadgeClass(asset.market_type)}`}
-                      >
+                      <span className={`rounded-full border px-2.5 py-1 text-xs capitalize ${marketBadgeClass(asset.market_type)}`}>
                         {asset.market_type}
                       </span>
                     </td>

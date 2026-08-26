@@ -9,6 +9,7 @@ export interface CommunitySignal {
   timeframe: string;
   upvotes: number;
   author_email: string;
+  is_own: boolean;        // server sets this correctly — no client-side guessing
   created_at: string;
   voted_by_me: boolean;
 }

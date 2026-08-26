@@ -1,10 +1,17 @@
+import logging
+import warnings
+
 from pydantic_settings import BaseSettings
+
+logger = logging.getLogger(__name__)
+
+_INSECURE_SECRET = "change-me-in-production-use-a-long-random-string"
 
 
 class Settings(BaseSettings):
     app_name: str = "AI Trading Copilot API"
     database_url: str = "postgresql://postgres:postgres@localhost:5432/trading_copilot"
-    secret_key: str = "change-me-in-production-use-a-long-random-string"
+    secret_key: str = _INSECURE_SECRET
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
     cors_origins: str = "http://localhost:3000"
@@ -34,8 +41,8 @@ class Settings(BaseSettings):
     gmail_user: str = ""
     gmail_pass: str = ""
 
-    # Web3Forms (for password reset emails)
-    web3forms_key: str = "dbda848b-a2a9-4954-88c7-5e5362feae49"
+    # Web3Forms (for password reset emails) — set in .env, never hardcode
+    web3forms_key: str = ""
     frontend_url: str = "https://kw-trading-copilot.vercel.app"
 
     @property
@@ -52,3 +59,13 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# Warn loudly if default insecure secret is still in use
+if settings.secret_key == _INSECURE_SECRET:
+    warnings.warn(
+        "\n\n⚠️  SECURITY WARNING: SECRET_KEY is using the default insecure value!\n"
+        "   Set a strong random SECRET_KEY in your .env file before deploying.\n"
+        "   Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\"\n",
+        stacklevel=1,
+    )
+    logger.critical("SECRET_KEY is not set — JWT tokens are INSECURE. Set SECRET_KEY in .env immediately.")

@@ -91,8 +91,20 @@ async def get_journal(
         cost = trade.entry_price * trade.size
         pnl_pct = round((pnl / cost * 100) if cost > 0 else 0, 2)
 
-        # Duration estimate (use created_at as proxy since closed_at not stored)
-        duration_minutes = max(1, abs(int(pnl * 10)))  # deterministic mock
+        # Actual duration from closed_at — fallback to 0 if not available
+        if trade.closed_at and trade.created_at:
+            closed = trade.closed_at
+            opened = trade.created_at
+            # Make both timezone-aware for comparison
+            if closed.tzinfo is None:
+                from datetime import timezone
+                closed = closed.replace(tzinfo=timezone.utc)
+            if opened.tzinfo is None:
+                from datetime import timezone
+                opened = opened.replace(tzinfo=timezone.utc)
+            duration_minutes = max(1, int((closed - opened).total_seconds() / 60))
+        else:
+            duration_minutes = 0
 
         if settings.has_ai:
             try:

@@ -36,7 +36,7 @@ class BinanceProvider:
         interval_map = {
             HistoryRange.d1: ("1h",  24),
             HistoryRange.w1: ("1d",  7),
-            HistoryRange.m1: ("1d",  90),   # 90 days — plenty for backtest
+            HistoryRange.m1: ("1d",  365),  # enough for 1Y backtest
             HistoryRange.y1: ("1w",  52),
         }
         interval, limit = interval_map[history_range]
@@ -107,7 +107,7 @@ class TwelveDataProvider:
         interval_map = {
             HistoryRange.d1: ("1h", 24),
             HistoryRange.w1: ("1day", 7),
-            HistoryRange.m1: ("1day", 200),
+            HistoryRange.m1: ("1day", 365),   # enough for 1Y backtest
             HistoryRange.y1: ("1week", 52),
         }
         interval, outputsize = interval_map[history_range]

@@ -15,6 +15,8 @@ export default function PaperTradingPanel({ accessToken, selectedSymbol }: Paper
   const [totalPnl, setTotalPnl] = useState(0);
   const [tradeType, setTradeType] = useState<TradeType>("BUY");
   const [size, setSize] = useState("1");
+  const [stopLoss, setStopLoss] = useState("");
+  const [takeProfit, setTakeProfit] = useState("");
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +45,13 @@ export default function PaperTradingPanel({ accessToken, selectedSymbol }: Paper
     setError(null);
     try {
       await openPaperTrade(
-        { symbol: selectedSymbol, type: tradeType, size: parseFloat(size) },
+        {
+          symbol: selectedSymbol,
+          type: tradeType,
+          size: parseFloat(size),
+          stop_loss: stopLoss ? parseFloat(stopLoss) : undefined,
+          take_profit: takeProfit ? parseFloat(takeProfit) : undefined,
+        },
         accessToken
       );
       await loadTrades();
@@ -102,6 +110,24 @@ export default function PaperTradingPanel({ accessToken, selectedSymbol }: Paper
           placeholder="Size"
           className="w-28 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
         />
+        <input
+          type="number"
+          min="0"
+          step="any"
+          value={stopLoss}
+          onChange={(e) => setStopLoss(e.target.value)}
+          placeholder="Stop Loss"
+          className="w-28 rounded-lg border border-red-500/30 bg-slate-950 px-3 py-2 text-sm placeholder-red-500/40"
+        />
+        <input
+          type="number"
+          min="0"
+          step="any"
+          value={takeProfit}
+          onChange={(e) => setTakeProfit(e.target.value)}
+          placeholder="Take Profit"
+          className="w-28 rounded-lg border border-emerald-500/30 bg-slate-950 px-3 py-2 text-sm placeholder-emerald-500/40"
+        />
         <button
           onClick={handleOpen}
           disabled={!selectedSymbol || actionLoading}
@@ -134,6 +160,12 @@ export default function PaperTradingPanel({ accessToken, selectedSymbol }: Paper
                   <span className="ml-2 text-slate-500">
                     {trade.size} @ {trade.entry_price}
                   </span>
+                  {trade.stop_loss && (
+                    <span className="ml-2 text-xs text-red-400">SL: {trade.stop_loss}</span>
+                  )}
+                  {trade.take_profit && (
+                    <span className="ml-2 text-xs text-emerald-400">TP: {trade.take_profit}</span>
+                  )}
                 </div>
                 <button
                   onClick={() => handleClose(trade.id)}

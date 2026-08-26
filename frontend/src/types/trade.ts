@@ -9,12 +9,15 @@ export interface Trade {
   type: TradeType;
   entry_price: number;
   exit_price?: number | null;
+  stop_loss?: number | null;
+  take_profit?: number | null;
   size: number;
   status: TradeStatus;
   is_paper: boolean;
   pnl?: number | null;
   pnl_percent?: number | null;
   created_at: string;
+  closed_at?: string | null;
 }
 
 export interface TradeList {
@@ -30,4 +33,6 @@ export interface PaperTradeOpenRequest {
   type: TradeType;
   size: number;
   entry_price?: number;
+  stop_loss?: number;
+  take_profit?: number;
 }

@@ -30,15 +30,30 @@ async def lifespan(app: FastAPI):
     # Startup
     Base.metadata.create_all(bind=engine)
 
-    # Safe migration — add reset token columns if not exist
+    # Safe migration — add columns if not exist
     try:
         with engine.connect() as conn:
             from sqlalchemy import text
+            # users — password reset
             conn.execute(text(
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR"
             ))
             conn.execute(text(
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP WITH TIME ZONE"
+            ))
+            # trades — closed_at, stop_loss, take_profit
+            conn.execute(text(
+                "ALTER TABLE trades ADD COLUMN IF NOT EXISTS closed_at TIMESTAMP WITH TIME ZONE"
+            ))
+            conn.execute(text(
+                "ALTER TABLE trades ADD COLUMN IF NOT EXISTS stop_loss DOUBLE PRECISION"
+            ))
+            conn.execute(text(
+                "ALTER TABLE trades ADD COLUMN IF NOT EXISTS take_profit DOUBLE PRECISION"
+            ))
+            # signals — source
+            conn.execute(text(
+                "ALTER TABLE signals ADD COLUMN IF NOT EXISTS source VARCHAR"
             ))
             conn.commit()
     except Exception as e:
@@ -92,28 +107,3 @@ app.include_router(trade_planner_router.router)
 @app.get("/health")
 def health():
     return {"status": "ok", "service": settings.app_name}
-
-
-@app.get("/debug/reset-check")
-def debug_reset_check():
-    """Check if reset_token column exists in DB."""
-    try:
-        with engine.connect() as conn:
-            from sqlalchemy import text
-            result = conn.execute(text(
-                "SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name IN ('reset_token','reset_token_expiry')"
-            ))
-            cols = [row[0] for row in result]
-            return {"columns_found": cols, "migration_ok": len(cols) == 2}
-    except Exception as e:
-        return {"error": str(e)}
-def debug_env():
-    """Temporary - check if API keys are loaded on Render."""
-    return {
-        "twelve_data_set": bool(settings.twelve_data_api_key),
-        "twelve_data_prefix": settings.twelve_data_api_key[:6] if settings.twelve_data_api_key else "EMPTY",
-        "polygon_set": bool(settings.polygon_api_key),
-        "polygon_prefix": settings.polygon_api_key[:6] if settings.polygon_api_key else "EMPTY",
-        "openrouter_set": bool(settings.openrouter_api_key),
-        "admin_email": settings.admin_email[:10] if settings.admin_email else "EMPTY",
-    }

@@ -17,6 +17,7 @@ class Signal(Base):
     confidence: Mapped[float | None] = mapped_column(Float, nullable=True)
     reasoning: Mapped[str | None] = mapped_column(Text, nullable=True)
     risk_level: Mapped[str | None] = mapped_column(String, nullable=True)
+    source: Mapped[str | None] = mapped_column(String, nullable=True)  # "claude" | "openrouter" | "rules"
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     asset = relationship("Asset", back_populates="signals")

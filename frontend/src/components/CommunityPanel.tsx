@@ -36,18 +36,15 @@ function timeAgo(iso: string): string {
 
 function SignalCard({
   sig,
-  userEmail,
   onVote,
   onDelete,
 }: {
   sig: CommunitySignal;
-  userEmail?: string;
   onVote: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
-  const isOwn = userEmail
-    ? sig.author_email.startsWith(userEmail.slice(0, 2))
-    : false;
+  // is_own is set by the server — no client-side email guessing needed
+  const isOwn = sig.is_own;
 
   return (
     <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-4 transition hover:border-slate-700">
@@ -333,7 +330,6 @@ export default function CommunityPanel({
             <SignalCard
               key={sig.id}
               sig={sig}
-              userEmail={userEmail}
               onVote={handleVote}
               onDelete={handleDelete}
             />

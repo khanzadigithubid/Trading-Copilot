@@ -19,6 +19,8 @@ class PaperTradeOpenRequest(BaseModel):
     type: TradeType
     size: float = Field(gt=0)
     entry_price: float | None = Field(default=None, gt=0)
+    stop_loss: float | None = Field(default=None, gt=0, description="Optional stop loss price")
+    take_profit: float | None = Field(default=None, gt=0, description="Optional take profit price")
 
 
 class TradeCloseRequest(BaseModel):
@@ -33,12 +35,15 @@ class TradeResponse(BaseModel):
     type: TradeType
     entry_price: float
     exit_price: float | None = None
+    stop_loss: float | None = None
+    take_profit: float | None = None
     size: float
     status: TradeStatus
     is_paper: bool
     pnl: float | None = None
     pnl_percent: float | None = None
     created_at: datetime
+    closed_at: datetime | None = None
 
 
 class TradeListResponse(BaseModel):

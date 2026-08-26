@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -44,11 +45,26 @@ class PaperTradingService:
             price_data = await aggregator.get_price(payload.symbol)
             entry_price = price_data.price
 
+        # Validate SL/TP direction
+        if payload.stop_loss is not None:
+            if payload.type == TradeType.buy and payload.stop_loss >= entry_price:
+                raise ValueError("Stop loss for a BUY trade must be below entry price.")
+            if payload.type == TradeType.sell and payload.stop_loss <= entry_price:
+                raise ValueError("Stop loss for a SELL trade must be above entry price.")
+
+        if payload.take_profit is not None:
+            if payload.type == TradeType.buy and payload.take_profit <= entry_price:
+                raise ValueError("Take profit for a BUY trade must be above entry price.")
+            if payload.type == TradeType.sell and payload.take_profit >= entry_price:
+                raise ValueError("Take profit for a SELL trade must be below entry price.")
+
         trade = Trade(
             user_id=user.id,
             asset_id=db_asset.id,
             type=payload.type.value,
             entry_price=entry_price,
+            stop_loss=payload.stop_loss,
+            take_profit=payload.take_profit,
             size=payload.size,
             status=TradeStatus.open.value,
             is_paper=True,
@@ -83,6 +99,7 @@ class PaperTradingService:
 
         trade.exit_price = exit_price
         trade.status = TradeStatus.closed.value
+        trade.closed_at = datetime.now(timezone.utc)  # ← actual close time
         db.commit()
         db.refresh(trade)
         return self._to_response(trade, db_asset)
@@ -141,12 +158,15 @@ class PaperTradingService:
             type=TradeType(trade.type) if trade.type else TradeType.buy,
             entry_price=trade.entry_price or 0,
             exit_price=trade.exit_price,
+            stop_loss=trade.stop_loss,
+            take_profit=trade.take_profit,
             size=trade.size or 0,
             status=TradeStatus(trade.status) if trade.status else TradeStatus.open,
             is_paper=trade.is_paper,
             pnl=pnl,
             pnl_percent=pnl_percent,
             created_at=trade.created_at,
+            closed_at=trade.closed_at,
         )
 
 
