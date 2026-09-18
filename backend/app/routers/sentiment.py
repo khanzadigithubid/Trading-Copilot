@@ -2,8 +2,11 @@
 Sentiment heatmap endpoint.
 Uses NewsAPI if configured, otherwise generates rule-based scores from
 mock price-action data. All asset scoring runs concurrently with timeouts.
+In-memory cache (5 min TTL) prevents repeated slow NewsAPI calls.
 """
+import asyncio
 from datetime import datetime, timedelta, timezone
+from typing import Any
 
 import httpx
 from fastapi import APIRouter, Depends
@@ -18,6 +21,11 @@ from app.services.market_data.mock_provider import mock_provider
 from app.schemas.asset import HistoryRange
 
 router = APIRouter(prefix="/sentiment", tags=["sentiment"])
+
+# ── In-memory response cache (5-minute TTL) ───────────────────────────────────
+_CACHE_TTL_SECONDS = 300  # 5 minutes
+_cached_response: dict[str, Any] | None = None
+_cache_expires_at: datetime = datetime.min.replace(tzinfo=timezone.utc)
 
 _BULLISH = ["surge", "rally", "gain", "high", "record", "bull", "rise", "up",
             "growth", "profit", "positive", "boost", "strong", "buy", "upgrade"]
@@ -93,9 +101,15 @@ async def _fetch_news_scores(asset_name: str) -> list[tuple[str, float]]:
 @router.get("")
 async def get_sentiment_heatmap(db: Session = Depends(get_db)):
     """Return sentiment scores for all assets — fast, uses mock data + cache."""
-    import asyncio
+    global _cached_response, _cache_expires_at
 
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=2)
+    now = datetime.now(timezone.utc)
+
+    # ── Serve from in-memory cache if still fresh ─────────────────────────────
+    if _cached_response is not None and now < _cache_expires_at:
+        return _cached_response
+
+    cutoff = now - timedelta(hours=2)
 
     async def _score_one(asset_def) -> dict:
         symbol = asset_def.symbol
@@ -180,7 +194,13 @@ async def get_sentiment_heatmap(db: Session = Depends(get_db)):
     results = [item for item in done if isinstance(item, dict)]
     results.sort(key=lambda x: x["score"], reverse=True)
 
-    return {
+    response = {
         "assets": results,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+    # ── Store in in-memory cache for 5 minutes ────────────────────────────────
+    _cached_response = response
+    _cache_expires_at = datetime.now(timezone.utc) + timedelta(seconds=_CACHE_TTL_SECONDS)
+
+    return response

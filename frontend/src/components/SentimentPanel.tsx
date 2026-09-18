@@ -77,7 +77,11 @@ function HeatCell({
   );
 }
 
-export default function SentimentPanel() {
+interface SentimentPanelProps {
+  accessToken?: string;
+}
+
+export default function SentimentPanel({ accessToken }: SentimentPanelProps = {}) {
   const [data, setData] = useState<SentimentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,14 +92,14 @@ export default function SentimentPanel() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiFetch<SentimentData>("/sentiment");
+      const result = await apiFetch<SentimentData>("/sentiment", {}, accessToken);
       setData(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load sentiment");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => { load(); }, [load]);
 

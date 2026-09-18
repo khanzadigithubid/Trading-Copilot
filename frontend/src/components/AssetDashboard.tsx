@@ -75,7 +75,7 @@ export default function AssetDashboard({ accessToken, selectedSymbol, onSelectSy
   }, [activeMarket, assets, search]);
 
   const symbols = useMemo(() => filteredAssets.map((a) => a.symbol), [filteredAssets]);
-  const { prices, connected } = usePriceWebSocket(symbols);
+  const { prices, connected } = usePriceWebSocket(symbols, accessToken);
 
   return (
     <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 sm:p-6">

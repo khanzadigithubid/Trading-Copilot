@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserRegister(BaseModel):
@@ -7,10 +7,20 @@ class UserRegister(BaseModel):
     capital: float = Field(default=10000.0, ge=0)
     risk_tolerance: float = Field(default=2.0, ge=0.1, le=10)
 
+    @field_validator("email", mode="before")
+    @classmethod
+    def strip_email(cls, v: str) -> str:
+        return v.strip().lower() if isinstance(v, str) else v
+
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def strip_email(cls, v: str) -> str:
+        return v.strip().lower() if isinstance(v, str) else v
 
 
 class TokenResponse(BaseModel):

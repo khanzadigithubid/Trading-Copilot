@@ -23,6 +23,7 @@ from app.routers import briefing as briefing_router
 from app.routers import news_impact as news_impact_router
 from app.routers import trade_planner as trade_planner_router
 from app.services.seed import seed_assets
+from app.services.sltp_monitor import start_monitor, stop_monitor
 
 
 @asynccontextmanager
@@ -65,8 +66,13 @@ async def lifespan(app: FastAPI):
         seed_assets(db)
     finally:
         db.close()
+
+    # Start SL/TP auto-close background monitor
+    start_monitor()
+
     yield
-    # Shutdown (nothing needed yet)
+    # Shutdown
+    stop_monitor()
 
 
 app = FastAPI(title=settings.app_name, version="0.5.0", lifespan=lifespan)

@@ -24,13 +24,12 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       error: undefined,
     };
   } catch {
-    // Refresh failed (server sleeping) — keep old token, don't logout
-    // Just reset the issuedAt so we try again later
-    console.log("Token refresh failed — keeping existing token");
+    // Refresh failed (server sleeping) — keep old token, retry in 1 hour
+    console.log("Token refresh failed — keeping existing token, will retry in 1 hour");
     return {
       ...token,
-      issuedAt: Date.now() - (5 * 24 * 60 * 60 * 1000), // retry in 1 day
-      error: undefined, // don't set error — don't logout
+      issuedAt: Date.now() - (4 * 24 * 60 * 60 * 1000), // retry ~1 day later (keeps under 5d threshold)
+      error: undefined,
     };
   }
 }
@@ -74,7 +73,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 30, // 30 days — stay logged in longer
+    maxAge: 60 * 60 * 24 * 7, // 7 days — matches backend JWT expiry
   },
   pages: {
     signIn: "/login",
@@ -93,11 +92,11 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      // Token fresh — less than 6 days old
+      // Token fresh — less than 5 days old
       const issuedAt = (token.issuedAt as number) ?? 0;
       const ageMs = Date.now() - issuedAt;
-      const sixDays = 6 * 24 * 60 * 60 * 1000;
-      if (ageMs < sixDays) return token;
+      const fiveDays = 5 * 24 * 60 * 60 * 1000;
+      if (ageMs < fiveDays) return token;
 
       // Token near expiry — auto refresh
       return refreshAccessToken(token);

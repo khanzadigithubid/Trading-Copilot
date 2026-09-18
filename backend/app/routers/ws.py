@@ -2,8 +2,9 @@ import asyncio
 import json
 from typing import Any
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 
+from app.core.security import decode_access_token
 from app.schemas.asset import PriceUpdate
 from app.services.market_data import aggregator
 
@@ -85,5 +86,20 @@ manager = PriceStreamManager()
 
 
 @router.websocket("/ws/prices")
-async def prices_websocket(websocket: WebSocket):
+async def prices_websocket(
+    websocket: WebSocket,
+    token: str | None = Query(default=None),
+):
+    """
+    WebSocket price stream — requires a valid JWT.
+    Pass token as query param: ws://host/ws/prices?token=<jwt>
+    On failure the connection is closed with code 4001 (Unauthorized).
+    """
+    user_id = decode_access_token(token or "")
+    if not user_id:
+        # Accept first so we can send a proper close code, then close
+        await websocket.accept()
+        await websocket.close(code=4001, reason="Unauthorized: invalid or missing token")
+        return
+
     await manager.handle(websocket)

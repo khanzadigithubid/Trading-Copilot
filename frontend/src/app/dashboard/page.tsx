@@ -216,7 +216,7 @@ export default function DashboardPage() {
             {/* Signal + Sentiment */}
             <div className="grid gap-6 lg:grid-cols-2">
               <SignalPanel symbol={selectedSymbol} accessToken={token} />
-              <SentimentPanel />
+              <SentimentPanel accessToken={token} />
             </div>
 
             {/* Chat */}
@@ -285,7 +285,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <div className="grid gap-6 lg:grid-cols-2">
               <AlertsPanel accessToken={token} selectedSymbol={selectedSymbol} />
-              <SentimentPanel />
+              <SentimentPanel accessToken={token} />
             </div>
             <ChatPanel accessToken={token} selectedSymbol={selectedSymbol} />
           </div>
@@ -300,7 +300,7 @@ export default function DashboardPage() {
                 selectedSymbol={selectedSymbol}
                 userEmail={session.user.email ?? ""}
               />
-              <SentimentPanel />
+              <SentimentPanel accessToken={token} />
             </div>
           </div>
         )}

@@ -34,7 +34,7 @@ class Settings(BaseSettings):
 
     # Resend email API (https://resend.com — free 100 emails/day)
     resend_api_key: str = ""
-    contact_email: str = "memonbisma22@gmail.com"
+    contact_email: str = ""  # set CONTACT_EMAIL in .env
 
     # Gmail SMTP (Python built-in — no extra package needed)
     # Setup: Gmail → Security → 2FA on → App Passwords → generate 16-char password
