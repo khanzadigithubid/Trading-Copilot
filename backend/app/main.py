@@ -52,6 +52,9 @@ async def lifespan(app: FastAPI):
             conn.execute(text(
                 "ALTER TABLE trades ADD COLUMN IF NOT EXISTS take_profit DOUBLE PRECISION"
             ))
+            conn.execute(text(
+                "ALTER TABLE trades ADD COLUMN IF NOT EXISTS alpaca_order_id VARCHAR"
+            ))
             # signals — source
             conn.execute(text(
                 "ALTER TABLE signals ADD COLUMN IF NOT EXISTS source VARCHAR"

@@ -11,14 +11,44 @@ from app.services.market_data.catalog import AssetDefinition
 
 # Map our symbols to Yahoo Finance tickers
 YAHOO_SYMBOLS: dict[str, str] = {
-    "XAGUSD": "SI=F",   # Silver futures
-    "USOIL":  "CL=F",   # WTI Crude Oil futures
-    "XAUUSD": "GC=F",   # Gold futures (backup)
-    "QQQ":    "QQQ",    # NASDAQ 100 ETF
-    "DIA":    "DIA",    # Dow Jones ETF
-    "SPY":    "SPY",    # S&P 500 ETF (backup)
-    "AMZN":   "AMZN",   # Amazon
-    "META":   "META",   # Meta/Facebook
+    # Commodities
+    "XAGUSD":  "SI=F",    # Silver futures
+    "USOIL":   "CL=F",    # WTI Crude Oil futures
+    "XAUUSD":  "GC=F",    # Gold futures
+    "UKOIL":   "BZ=F",    # Brent Crude Oil futures
+    "XPTUSD":  "PL=F",    # Platinum futures
+    "XPDUSD":  "PA=F",    # Palladium futures
+    "NATGAS":  "NG=F",    # Natural Gas futures
+    "COPPER":  "HG=F",    # Copper futures
+    "WHEAT":   "ZW=F",    # Wheat futures
+    "CORN":    "ZC=F",    # Corn futures
+    # US Stocks that need Yahoo fallback
+    "AMZN":    "AMZN",
+    "META":    "META",
+    "BRKB":    "BRK-B",   # Berkshire B
+    "BABA":    "BABA",
+    "PDD":     "PDD",
+    # ETFs — all via Yahoo
+    "SPY":     "SPY",
+    "QQQ":     "QQQ",
+    "DIA":     "DIA",
+    "IWM":     "IWM",
+    "VTI":     "VTI",
+    "VOO":     "VOO",
+    "GLD":     "GLD",
+    "SLV":     "SLV",
+    "USO":     "USO",
+    "TLT":     "TLT",
+    "XLF":     "XLF",
+    "XLK":     "XLK",
+    "XLE":     "XLE",
+    "XLV":     "XLV",
+    "ARKK":    "ARKK",
+    "ARKG":    "ARKG",
+    "ARKW":    "ARKW",
+    "SQQQ":    "SQQQ",
+    "SPXU":    "SPXU",
+    "TQQQ":    "TQQQ",
 }
 
 HEADERS = {

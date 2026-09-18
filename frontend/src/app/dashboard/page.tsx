@@ -12,6 +12,7 @@ import BriefingPanel from "@/components/BriefingPanel";
 import CandlestickChart from "@/components/CandlestickChart";
 import ChatPanel from "@/components/ChatPanel";
 import CommunityPanel from "@/components/CommunityPanel";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import MTFSignalPanel from "@/components/MTFSignalPanel";
 import NewsImpactPanel from "@/components/NewsImpactPanel";
 import PaperTradingPanel from "@/components/PaperTradingPanel";
@@ -107,8 +108,12 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Right — User avatar + name + signout */}
+          {/* Right — Language switcher + User avatar + signout */}
           <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher />
+
+            {/* Divider */}
+            <div className="h-4 sm:h-5 w-px bg-slate-700" />
             {/* Avatar + name */}
             <div className="flex items-center gap-1.5 sm:gap-2.5">
               <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-500 text-slate-950 font-bold text-xs sm:text-sm select-none">

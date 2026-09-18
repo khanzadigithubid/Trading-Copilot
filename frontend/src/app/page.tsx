@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import MobileNav from "@/components/MobileNav";
 import LiveSignalPreview from "@/components/LiveSignalPreview";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/lib/i18n/context";
 
 const NAV_LINKS = [
   { href: "/markets", label: "Markets", icon: "🌍" },
@@ -111,16 +113,17 @@ const STEPS = [
 ];
 
 const STATS = [
-  { value: "27", label: "Live Markets", icon: "🌍" },
-  { value: "5", label: "AI Strategies", icon: "⚡" },
-  { value: "100%", label: "Free Forever", icon: "✅" },
-  { value: "24/7", label: "Live Data", icon: "📡" },
+  { value: "193", labelKey: "liveMarkets" as const, icon: "🌍" },
+  { value: "5",   labelKey: "aiStrategies" as const, icon: "⚡" },
+  { value: "100%",labelKey: "freeForever" as const, icon: "✅" },
+  { value: "24/7",labelKey: "liveData" as const, icon: "📡" },
 ];
 
 
 export default function HomePage() {
   const { status } = useSession();
   const router = useRouter();
+  const { t, isRTL } = useI18n();
 
   useEffect(() => {
     if (status === "authenticated") router.replace("/dashboard");
@@ -145,16 +148,17 @@ export default function HomePage() {
             <span className="font-semibold text-slate-100 text-sm sm:text-base">Trading Copilot</span>
           </Link>
           <div className="hidden md:flex items-center gap-4 text-sm text-slate-400">
-            <Link href="/markets" className="hover:text-slate-100 transition">Markets</Link>
-            <Link href="/learn" className="hover:text-slate-100 transition">Learn</Link>
-            <Link href="/news" className="hover:text-slate-100 transition">News</Link>
-            <Link href="/leaderboard" className="hover:text-slate-100 transition">Leaderboard</Link>
-            <Link href="/about" className="hover:text-slate-100 transition">About</Link>
+            <Link href="/markets" className="hover:text-slate-100 transition">{t.nav.markets}</Link>
+            <Link href="/learn" className="hover:text-slate-100 transition">{t.nav.learn}</Link>
+            <Link href="/news" className="hover:text-slate-100 transition">{t.nav.news}</Link>
+            <Link href="/leaderboard" className="hover:text-slate-100 transition">{t.nav.leaderboard}</Link>
+            <Link href="/about" className="hover:text-slate-100 transition">{t.nav.about}</Link>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden md:block text-sm text-slate-400 hover:text-slate-100 transition">Sign in</Link>
+            <LanguageSwitcher />
+            <Link href="/login" className="hidden md:block text-sm text-slate-400 hover:text-slate-100 transition">{t.signIn}</Link>
             <Link href="/register" className="hidden md:block rounded-full bg-emerald-500 px-4 py-1.5 text-sm font-semibold text-slate-950 hover:bg-emerald-400 transition">
-              Get started
+              {t.getStarted}
             </Link>
             <MobileNav links={NAV_LINKS} showAuth={true} />
           </div>
@@ -173,40 +177,39 @@ export default function HomePage() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/8 px-4 py-1.5 text-xs font-medium text-emerald-400 mb-6">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            27 markets · Live prices · AI-powered · 100% free
+            {t.hero.badge}
           </div>
 
           {/* Heading */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-6">
-            Trade smarter with<br />
+            {t.hero.heading1}<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
-              AI that explains itself
+              {t.hero.heading2}
             </span>
           </h1>
 
           <p className="mx-auto max-w-2xl text-base sm:text-xl leading-relaxed text-slate-400 mb-8">
-            Not just signals — full reasoning. Know exactly why the AI says BUY or SELL.
-            Professional risk tools, backtesting, and trade journaling. All free.
+            {t.hero.subheading}
           </p>
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
             <Link href="/register"
               className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 px-8 py-3.5 text-sm font-bold text-slate-950 transition shadow-xl shadow-emerald-500/25">
-              Start free — no credit card
+              {t.hero.cta}
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
             <Link href="/markets"
               className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-slate-700 hover:border-slate-600 hover:bg-slate-800/50 px-8 py-3.5 text-sm font-semibold text-slate-300 transition">
-              Browse markets
+              {t.hero.ctaSecondary}
             </Link>
           </div>
 
           {/* Trust line */}
           <p className="text-xs text-slate-600">
-            Forex · Crypto · Stocks · Commodities · Indices · Paper trading only · Not financial advice
+            {t.hero.trustLine}
           </p>
         </div>
 
@@ -224,10 +227,10 @@ export default function HomePage() {
       <section className="border-y border-slate-800/60 bg-slate-900/30 py-10 px-4 sm:px-6">
         <div className="mx-auto max-w-5xl grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
           {STATS.map((s) => (
-            <div key={s.label} className="flex flex-col items-center text-center gap-1">
+            <div key={s.labelKey} className="flex flex-col items-center text-center gap-1">
               <span className="text-2xl mb-1">{s.icon}</span>
               <p className="text-3xl sm:text-4xl font-black text-emerald-400">{s.value}</p>
-              <p className="text-xs sm:text-sm text-slate-500">{s.label}</p>
+              <p className="text-xs sm:text-sm text-slate-500">{t.stats[s.labelKey]}</p>
             </div>
           ))}
         </div>
@@ -405,8 +408,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-slate-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
-            <p>© {new Date().getFullYear()} AI Trading Copilot. Built by Khanzadi.</p>
-            <p>For educational purposes only · Not financial advice</p>
+            <p>© {new Date().getFullYear()} AI Trading Copilot. {t.footer.builtBy}.</p>
+            <p>{t.footer.disclaimer}</p>
           </div>
         </div>
       </footer>

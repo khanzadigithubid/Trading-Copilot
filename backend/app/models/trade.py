@@ -22,6 +22,7 @@ class Trade(Base):
     size: Mapped[float | None] = mapped_column(Float, nullable=True)
     status: Mapped[str | None] = mapped_column(String, nullable=True)
     is_paper: Mapped[bool] = mapped_column(Boolean, default=True)
+    alpaca_order_id: Mapped[str | None] = mapped_column(String, nullable=True)  # Alpaca order ID if submitted
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 

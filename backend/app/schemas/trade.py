@@ -40,6 +40,7 @@ class TradeResponse(BaseModel):
     size: float
     status: TradeStatus
     is_paper: bool
+    alpaca_order_id: str | None = None   # Set when trade is mirrored to Alpaca paper account
     pnl: float | None = None
     pnl_percent: float | None = None
     created_at: datetime

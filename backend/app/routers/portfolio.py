@@ -120,3 +120,18 @@ def get_portfolio_stats(
         ),
         equity_curve=equity_curve[-100:],  # last 100 points
     )
+
+
+@router.get("/alpaca")
+async def get_alpaca_account_info(
+    current_user: User = Depends(get_current_user),
+):
+    """Return Alpaca paper account info — equity, buying power, positions."""
+    from app.services.alpaca_broker import get_alpaca_account, get_alpaca_positions
+    account = await get_alpaca_account()
+    positions = await get_alpaca_positions()
+    return {
+        "connected": bool(account),
+        "account": account,
+        "positions": positions,
+    }

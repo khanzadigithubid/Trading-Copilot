@@ -48,12 +48,26 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    // lang and dir are updated client-side by I18nProvider via useEffect
+    // Default is English LTR; Arabic will flip to RTL automatically
+    <html lang="en" dir="ltr">
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* Arabic font — loaded only when needed via CSS font-face */}
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+          crossOrigin="anonymous"
+        />
+        <style>{`
+          /* Arabic RTL font */
+          @import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;900&display=swap');
+          [dir="rtl"] { font-family: 'Noto Kufi Arabic', var(--font-geist-sans), sans-serif; }
+          [dir="rtl"] .ms-auto { margin-inline-start: auto; margin-inline-end: 0; }
+        `}</style>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>

@@ -1,4 +1,5 @@
 from app.schemas.asset import HistoryRange, HistoryResponse, MarketType, PriceResponse
+from app.services.market_data.alpaca import alpaca_provider
 from app.services.market_data.catalog import AssetDefinition, get_asset, list_assets
 from app.services.market_data.coingecko import coingecko_provider
 from app.services.market_data.exchangerate import exchangerate_provider
@@ -38,26 +39,22 @@ class MarketDataAggregator:
                     continue
             return await mock_provider.get_price(asset)
 
-        # Special case: Yahoo symbols (Silver, Oil, Gold, indices, AMZN, META)
+        # Special case: Yahoo symbols (Silver, Oil, Gold, commodities, ETFs)
         if asset.symbol in YAHOO_SYMBOLS:
-            for provider in [yahoo_provider, mock_provider]:
+            for provider, src in [(yahoo_provider, "yahoo"), (mock_provider, "mock")]:
                 try:
                     return await provider.get_price(asset)
                 except Exception:
                     continue
             return await mock_provider.get_price(asset)
 
-        # Stocks: Polygon → mock
-        provider = self._provider_for(asset)
-        try:
-            return await provider.get_price(asset)
-        except Exception:
-            if asset.market_type == MarketType.stock:
-                try:
-                    return await polygon_provider.get_price(asset)
-                except Exception:
-                    pass
-            return await mock_provider.get_price(asset)
+        # Stocks: Alpaca → Polygon → mock
+        for provider, src in [(alpaca_provider, "alpaca"), (polygon_provider, "polygon")]:
+            try:
+                return await provider.get_price(asset)
+            except Exception:
+                continue
+        return await mock_provider.get_price(asset)
 
     async def get_history(self, symbol: str, history_range: HistoryRange) -> HistoryResponse:
         asset = self._require_asset(symbol)
@@ -94,16 +91,22 @@ class MarketDataAggregator:
                 except Exception:
                     continue
 
-        provider = self._provider_for(asset)
-        source_name = "twelvedata" if asset.market_type == MarketType.forex else "polygon"
-        try:
-            bars = await provider.get_history(asset, history_range)
-            return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
-                                   range=history_range, bars=bars, source=source_name)
-        except Exception:
-            bars = await mock_provider.get_history(asset, history_range)
-            return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
-                                   range=history_range, bars=bars, source="mock")
+        # Stocks: Alpaca → Polygon → TwelveData → mock
+        for provider, src in [
+            (alpaca_provider,   "alpaca"),
+            (polygon_provider,  "polygon"),
+            (twelve_data_provider, "twelvedata"),
+        ]:
+            try:
+                bars = await provider.get_history(asset, history_range)
+                return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
+                                       range=history_range, bars=bars, source=src)
+            except Exception:
+                continue
+
+        bars = await mock_provider.get_history(asset, history_range)
+        return HistoryResponse(symbol=asset.symbol, market_type=asset.market_type,
+                               range=history_range, bars=bars, source="mock")
 
     async def get_prices(self, symbols: list[str]) -> list[PriceResponse]:
         import asyncio

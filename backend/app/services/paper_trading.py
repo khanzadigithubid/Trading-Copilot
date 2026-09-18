@@ -16,6 +16,7 @@ from app.schemas.trade import (
 )
 from app.services.market_data import aggregator
 from app.services.market_data.catalog import get_asset
+from app.services.alpaca_broker import submit_paper_order, cancel_alpaca_order
 
 
 class PaperTradingService:
@@ -72,6 +73,20 @@ class PaperTradingService:
         db.add(trade)
         db.commit()
         db.refresh(trade)
+
+        # Submit to Alpaca paper trading (non-blocking — fire and forget on failure)
+        alpaca_order = await submit_paper_order(
+            symbol=payload.symbol,
+            side=payload.type.value.lower(),
+            qty=payload.size,
+            stop_loss=payload.stop_loss,
+            take_profit=payload.take_profit,
+        )
+        if alpaca_order.get("id"):
+            trade.alpaca_order_id = alpaca_order["id"]
+            db.commit()
+            db.refresh(trade)
+
         return self._to_response(trade, db_asset)
 
     async def close_trade(
@@ -99,9 +114,14 @@ class PaperTradingService:
 
         trade.exit_price = exit_price
         trade.status = TradeStatus.closed.value
-        trade.closed_at = datetime.now(timezone.utc)  # ← actual close time
+        trade.closed_at = datetime.now(timezone.utc)
         db.commit()
         db.refresh(trade)
+
+        # Cancel matching Alpaca order if exists
+        if trade.alpaca_order_id:
+            await cancel_alpaca_order(trade.alpaca_order_id)
+
         return self._to_response(trade, db_asset)
 
     def list_user_trades(self, user: User, db: Session) -> TradeListResponse:
@@ -163,6 +183,7 @@ class PaperTradingService:
             size=trade.size or 0,
             status=TradeStatus(trade.status) if trade.status else TradeStatus.open,
             is_paper=trade.is_paper,
+            alpaca_order_id=trade.alpaca_order_id,
             pnl=pnl,
             pnl_percent=pnl_percent,
             created_at=trade.created_at,

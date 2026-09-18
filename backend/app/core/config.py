@@ -29,8 +29,10 @@ class Settings(BaseSettings):
     twelve_data_api_key: str = ""
     news_api_key: str = ""
 
-    # Admin — set your email here to access /admin/stats
-    admin_email: str = ""
+    # Alpaca Markets (free paper trading — https://alpaca.markets)
+    alpaca_api_key: str = ""
+    alpaca_secret_key: str = ""
+    alpaca_base_url: str = "https://paper-api.alpaca.markets"
 
     # Resend email API (https://resend.com — free 100 emails/day)
     resend_api_key: str = ""
@@ -41,7 +43,8 @@ class Settings(BaseSettings):
     gmail_user: str = ""
     gmail_pass: str = ""
 
-    # Web3Forms (for password reset emails) — set in .env, never hardcode
+    # Admin — set your email here to access /admin/stats
+    admin_email: str = ""
     web3forms_key: str = ""
     frontend_url: str = "https://kw-trading-copilot.vercel.app"
 
