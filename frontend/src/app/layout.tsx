@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { Noto_Kufi_Arabic } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
 import ChatWidget from "@/components/ChatWidget";
@@ -17,15 +16,6 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
-});
-
-// Arabic font — loaded via next/font (no 404, no preload warnings)
-const notoKufiArabic = Noto_Kufi_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "600", "700", "900"],
-  variable: "--font-arabic",
-  display: "swap",
-  preload: false, // only load when Arabic is selected
 });
 
 export const metadata: Metadata = {
@@ -60,7 +50,7 @@ export default function RootLayout({
   return (
     // lang and dir stay as defaults — I18nProvider updates them client-side via useEffect
     // This avoids React hydration mismatch (#418/#423/#425)
-    <html lang="en" dir="ltr" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${notoKufiArabic.variable}`}>
+    <html lang="en" dir="ltr" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

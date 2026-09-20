@@ -49,9 +49,10 @@ table {
   }
 }
 
-/* Arabic RTL font — applied when I18nProvider sets dir=rtl */
+/* Arabic RTL font — loaded on-demand when user selects Arabic */
+/* Font injected dynamically via context.tsx loadArabicFont() */
 [dir="rtl"] {
-  font-family: var(--font-arabic), var(--font-geist-sans), Arial, sans-serif;
+  font-family: 'Noto Kufi Arabic', var(--font-geist-sans), Arial, sans-serif;
 }
 
 [dir="rtl"] .ms-auto {
