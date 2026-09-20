@@ -48,3 +48,13 @@ table {
     min-height: 36px;
   }
 }
+
+/* Arabic RTL font — applied when I18nProvider sets dir=rtl */
+[dir="rtl"] {
+  font-family: var(--font-arabic), var(--font-geist-sans), Arial, sans-serif;
+}
+
+[dir="rtl"] .ms-auto {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
+}

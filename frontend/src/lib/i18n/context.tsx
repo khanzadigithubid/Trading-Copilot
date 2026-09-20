@@ -32,34 +32,38 @@ const I18nContext = createContext<I18nContextValue>({
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
+  const [mounted, setMounted] = useState(false);
 
-  // Load saved locale on mount
+  // Load saved locale on mount — only runs client-side
   useEffect(() => {
     const saved = (localStorage.getItem(STORAGE_KEY) as Locale) || "en";
     if (LOCALES[saved]) setLocaleState(saved);
+    setMounted(true);
   }, []);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
     localStorage.setItem(STORAGE_KEY, l);
-    // Apply RTL direction to document
     document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = l;
   }, []);
 
-  // Apply dir on locale change
+  // Apply dir/lang on locale change (after mount)
   useEffect(() => {
+    if (!mounted) return;
     document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = locale;
-  }, [locale]);
+  }, [locale, mounted]);
 
+  // Always render with "en" on first pass to match server HTML
+  // After mount, context updates to saved locale — no hydration mismatch
   return (
     <I18nContext.Provider
       value={{
-        locale,
-        t: LOCALES[locale] ?? en,
+        locale: mounted ? locale : "en",
+        t: mounted ? (LOCALES[locale] ?? en) : en,
         setLocale,
-        isRTL: locale === "ar",
+        isRTL: mounted ? locale === "ar" : false,
       }}
     >
       {children}

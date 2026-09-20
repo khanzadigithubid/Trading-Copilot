@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Noto_Kufi_Arabic } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
 import ChatWidget from "@/components/ChatWidget";
@@ -16,6 +17,15 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+// Arabic font — loaded via next/font (no 404, no preload warnings)
+const notoKufiArabic = Noto_Kufi_Arabic({
+  subsets: ["arabic"],
+  weight: ["400", "600", "700", "900"],
+  variable: "--font-arabic",
+  display: "swap",
+  preload: false, // only load when Arabic is selected
 });
 
 export const metadata: Metadata = {
@@ -48,28 +58,16 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // lang and dir are updated client-side by I18nProvider via useEffect
-    // Default is English LTR; Arabic will flip to RTL automatically
-    <html lang="en" dir="ltr">
+    // lang and dir stay as defaults — I18nProvider updates them client-side via useEffect
+    // This avoids React hydration mismatch (#418/#423/#425)
+    <html lang="en" dir="ltr" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${notoKufiArabic.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="mobile-web-app-capable" content="yes" />
-        {/* Arabic font — loaded only when needed via CSS font-face */}
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-          crossOrigin="anonymous"
-        />
-        <style>{`
-          /* Arabic RTL font */
-          @import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;900&display=swap');
-          [dir="rtl"] { font-family: 'Noto Kufi Arabic', var(--font-geist-sans), sans-serif; }
-          [dir="rtl"] .ms-auto { margin-inline-start: auto; margin-inline-end: 0; }
-        `}</style>
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className="antialiased">
         <Providers>{children}</Providers>
         <PWAInstallPrompt />
         <ChatWidget />
