@@ -114,5 +114,6 @@ app.include_router(trade_planner_router.router)
 
 
 @app.get("/health")
+@app.head("/health")
 def health():
     return {"status": "ok", "service": settings.app_name}
