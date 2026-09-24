@@ -5,19 +5,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { API_URL } from "@/lib/api";
 import type { PriceUpdate } from "@/types/market";
 
-const POLL_INTERVAL = 6000; // 6 seconds
+const POLL_INTERVAL = 10000;  // 10 seconds
+const BATCH_SIZE    = 10;     // max concurrent requests at once
+const BATCH_DELAY   = 200;    // ms between batches
 
 /**
- * Polls live prices for the given symbols every 6 seconds.
- * Accepts an optional `token` so that if the price endpoint ever becomes
- * protected, or if we switch to the authenticated /ws/prices WebSocket,
- * the token is already threaded through.
+ * Polls live prices in small batches to avoid overwhelming the server
+ * and triggering browser connection limits / CORS preflight failures.
  */
 export function usePriceWebSocket(symbols: string[], token?: string) {
   const [prices, setPrices] = useState<Record<string, PriceUpdate>>({});
   const [connected, setConnected] = useState(false);
   const symbolsKey = symbols.join(",");
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef   = useRef<NodeJS.Timeout | null>(null);
   const mountedRef = useRef(true);
 
   const fetchPrices = useCallback(async () => {
@@ -27,39 +27,48 @@ export function usePriceWebSocket(symbols: string[], token?: string) {
       ? { Authorization: `Bearer ${token}` }
       : {};
 
-    try {
+    const next: Record<string, PriceUpdate> = {};
+
+    // Split into batches to avoid 100+ concurrent requests
+    for (let i = 0; i < symbols.length; i += BATCH_SIZE) {
+      if (!mountedRef.current) break;
+
+      const batch = symbols.slice(i, i + BATCH_SIZE);
+
       const results = await Promise.allSettled(
-        symbols.map((sym) =>
+        batch.map((sym) =>
           fetch(`${API_URL}/assets/${sym}/price`, {
             headers,
-            signal: AbortSignal.timeout(5000),
+            signal: AbortSignal.timeout(8000),
           }).then((r) => (r.ok ? r.json() : null))
         )
       );
 
-      if (!mountedRef.current) return;
-
-      const next: Record<string, PriceUpdate> = {};
-      results.forEach((result, i) => {
+      results.forEach((result, j) => {
         if (result.status === "fulfilled" && result.value) {
           const data = result.value;
-          next[symbols[i]] = {
-            symbol: data.symbol,
-            market_type: data.market_type,
-            price: data.price,
-            change: data.change,
+          next[batch[j]] = {
+            symbol:         data.symbol,
+            market_type:    data.market_type,
+            price:          data.price,
+            change:         data.change,
             change_percent: data.change_percent,
-            timestamp: data.timestamp,
+            timestamp:      data.timestamp,
           } as PriceUpdate;
         }
       });
 
-      if (Object.keys(next).length > 0) {
-        setPrices((prev) => ({ ...prev, ...next }));
-        setConnected(true);
+      // Small delay between batches — avoid overwhelming server
+      if (i + BATCH_SIZE < symbols.length) {
+        await new Promise((res) => setTimeout(res, BATCH_DELAY));
       }
-    } catch {
-      if (mountedRef.current) setConnected(false);
+    }
+
+    if (!mountedRef.current) return;
+
+    if (Object.keys(next).length > 0) {
+      setPrices((prev) => ({ ...prev, ...next }));
+      setConnected(true);
     }
   }, [symbolsKey, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
